@@ -75,16 +75,6 @@
           pkgs = nixpkgs.legacyPackages.aarch64-darwin;
           modules = [ ./home/full.nix ./home/darwin.nix ];
         };
-
-        # Legacy aliases (backward compatibility)
-        "cooper@linux" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home/thin.nix ./home/linux.nix ];
-        };
-        "cooper@darwin" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-          modules = [ ./home/thin.nix ./home/darwin.nix ];
-        };
       };
 
       # Darwin (macOS) system configuration
