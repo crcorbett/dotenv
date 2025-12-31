@@ -1,12 +1,8 @@
 { config, pkgs, ... }:
 
-# Thin profile - minimal setup for servers/VMs
+# Thin profile - servers/VMs with zsh but no heavy extras
 {
   imports = [ ./base.nix ];
 
-  # Use bash (default)
-  programs.bash = {
-    enable = true;
-    enableCompletion = true;
-  };
+  # Thin profile uses base zsh/p10k setup, no additional packages
 }

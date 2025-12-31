@@ -22,6 +22,47 @@
     gh
   ];
 
+  # Zsh with Oh My Zsh + Powerlevel10k
+  programs.zsh = {
+    enable = true;
+    enableCompletion = true;
+    autosuggestion.enable = false;
+    syntaxHighlighting.enable = false;
+    
+    # Oh My Zsh
+    oh-my-zsh = {
+      enable = true;
+      plugins = [ "git" ];
+    };
+
+    # Powerlevel10k setup
+    plugins = [
+      {
+        name = "powerlevel10k";
+        src = pkgs.zsh-powerlevel10k;
+        file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
+      }
+    ];
+
+    initExtraFirst = ''
+      # Enable Powerlevel10k instant prompt
+      if [[ -r "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh" ]]; then
+        source "''${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-''${(%):-%n}.zsh"
+      fi
+    '';
+
+    initExtra = ''
+      # Load Powerlevel10k config
+      [[ ! -f ~/.p10k.zsh ]] || source ~/.p10k.zsh
+      
+      # Local bin
+      export PATH="$HOME/.local/bin:$PATH"
+    '';
+  };
+
+  # Copy p10k config
+  home.file.".p10k.zsh".source = ./p10k.zsh;
+
   # Tmux configuration
   programs.tmux = {
     enable = true;
@@ -88,7 +129,7 @@
     };
   };
 
-  # Shell aliases (work in both bash and zsh)
+  # Shell aliases
   home.shellAliases = {
     ll = "ls -la";
     gs = "git status";
