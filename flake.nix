@@ -52,21 +52,44 @@
 
       # Home Manager configurations
       homeConfigurations = {
-        # Linux (e.g., Azure VM)
-        "cooper@linux" = home-manager.lib.homeManagerConfiguration {
+        # Linux thin (servers, VMs - minimal bash setup)
+        "cooper@linux-thin" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home/common.nix ./home/linux.nix ];
+          modules = [ ./home/thin.nix ./home/linux.nix ];
         };
         
-        # macOS (Apple Silicon)
+        # Linux full (dev workstations - zsh, neovim, etc.)
+        "cooper@linux-full" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [ ./home/full.nix ./home/linux.nix ];
+        };
+        
+        # macOS thin (Apple Silicon - minimal)
+        "cooper@darwin-thin" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          modules = [ ./home/thin.nix ./home/darwin.nix ];
+        };
+        
+        # macOS full (Apple Silicon - full dev setup)
+        "cooper@darwin-full" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
+          modules = [ ./home/full.nix ./home/darwin.nix ];
+        };
+
+        # Legacy aliases (backward compatibility)
+        "cooper@linux" = home-manager.lib.homeManagerConfiguration {
+          pkgs = nixpkgs.legacyPackages.x86_64-linux;
+          modules = [ ./home/thin.nix ./home/linux.nix ];
+        };
         "cooper@darwin" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-          modules = [ ./home/common.nix ./home/darwin.nix ];
+          modules = [ ./home/thin.nix ./home/darwin.nix ];
         };
       };
 
       # Darwin (macOS) system configuration
       darwinConfigurations = {
+        # Full setup for main Mac workstation
         "coopers-macbook-pro" = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
@@ -75,7 +98,9 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.cooper = import ./home/common.nix;
+              home-manager.users.cooper = { pkgs, ... }: {
+                imports = [ ./home/full.nix ./home/darwin.nix ];
+              };
             }
           ];
         };
@@ -83,6 +108,7 @@
 
       # NixOS configuration (for VMs/servers)
       nixosConfigurations = {
+        # Thin setup for VMs/servers
         "development-vm" = nixpkgs.lib.nixosSystem {
           system = "x86_64-linux";
           modules = [
@@ -91,7 +117,9 @@
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.cooper = import ./home/common.nix;
+              home-manager.users.cooper = { pkgs, ... }: {
+                imports = [ ./home/thin.nix ./home/linux.nix ];
+              };
             }
           ];
         };
