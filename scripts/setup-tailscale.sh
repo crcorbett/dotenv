@@ -6,18 +6,18 @@
 # home-manager can't manage system services. For NixOS, use the native
 # services.tailscale module instead.
 #
+# Authentication is via Google OAuth - the script will provide a URL to
+# open in your browser for login.
+#
 # Usage:
-#   ./scripts/setup-tailscale.sh                    # Interactive mode
-#   ./scripts/setup-tailscale.sh --auth-key KEY     # With auth key
-#   TAILSCALE_AUTH_KEY=xxx ./scripts/setup-tailscale.sh  # Via env var
+#   ./scripts/setup-tailscale.sh              # Standard setup
+#   ./scripts/setup-tailscale.sh --ssh        # Enable Tailscale SSH
 #
 # Options:
-#   --auth-key KEY    Tailscale auth key (from admin console)
 #   --hostname NAME   Override hostname (default: system hostname)
 #   --ssh             Enable Tailscale SSH
 #   --accept-routes   Accept routes from other nodes
 #   --exit-node       Advertise as exit node
-#   --unattended      Non-interactive mode (requires --auth-key or env var)
 #   --help            Show this help message
 #
 
@@ -30,13 +30,10 @@ YELLOW='\033[1;33m'
 BLUE='\033[0;34m'
 NC='\033[0m' # No Color
 
-# Default values
-AUTH_KEY="${TAILSCALE_AUTH_KEY:-}"
 HOSTNAME=""
 ENABLE_SSH=false
 ACCEPT_ROUTES=false
 EXIT_NODE=false
-UNATTENDED=false
 
 log_info() { echo -e "${BLUE}[INFO]${NC} $*"; }
 log_success() { echo -e "${GREEN}[OK]${NC} $*"; }
@@ -51,10 +48,6 @@ show_help() {
 parse_args() {
     while [[ $# -gt 0 ]]; do
         case $1 in
-            --auth-key)
-                AUTH_KEY="$2"
-                shift 2
-                ;;
             --hostname)
                 HOSTNAME="$2"
                 shift 2
@@ -69,10 +62,6 @@ parse_args() {
                 ;;
             --exit-node)
                 EXIT_NODE=true
-                shift
-                ;;
-            --unattended)
-                UNATTENDED=true
                 shift
                 ;;
             --help|-h)
@@ -210,11 +199,6 @@ check_status() {
 authenticate() {
     local up_args=()
     
-    # Build tailscale up arguments
-    if [[ -n "$AUTH_KEY" ]]; then
-        up_args+=("--auth-key=$AUTH_KEY")
-    fi
-    
     if [[ -n "$HOSTNAME" ]]; then
         up_args+=("--hostname=$HOSTNAME")
     fi
@@ -232,20 +216,10 @@ authenticate() {
     fi
     
     log_info "Connecting to Tailscale..."
+    log_info "A URL will be displayed - open it in your browser to authenticate with Google"
+    echo ""
     
-    if [[ -n "$AUTH_KEY" ]]; then
-        # Non-interactive auth with key
-        $SUDO tailscale up "${up_args[@]}"
-    else
-        if [[ "$UNATTENDED" == true ]]; then
-            log_error "Unattended mode requires --auth-key or TAILSCALE_AUTH_KEY env var"
-            exit 1
-        fi
-        
-        # Interactive auth - will print URL
-        log_info "Opening browser for authentication..."
-        $SUDO tailscale up "${up_args[@]}"
-    fi
+    $SUDO tailscale up "${up_args[@]}"
     
     log_success "Successfully connected to Tailscale!"
 }

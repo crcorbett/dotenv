@@ -199,74 +199,56 @@ Used with `nixos-rebuild switch --flake .#<name>`:
 
 ## Tailscale Setup
 
-Tailscale provides secure networking between all your machines. Setup varies by platform:
+Tailscale provides secure networking between all your machines. Authentication is via **Google OAuth** - you'll be given a URL to open in your browser.
 
-### NixOS (Automatic)
-
-Tailscale is fully managed by NixOS. Just add your auth key:
-
-```nix
-# In nixos/configuration.nix
-services.tailscale = {
-  enable = true;
-  authKeyFile = "/run/secrets/tailscale-auth-key";  # Use sops-nix or agenix
-};
-```
-
-### macOS (nix-darwin)
+### macOS
 
 The daemon is managed by nix-darwin, but requires manual authentication:
 
 ```bash
-# After darwin-rebuild switch
-sudo tailscale up --ssh
-```
-
-Or use the helper script:
-
-```bash
+# After darwin-rebuild switch, run:
 ./scripts/setup-tailscale.sh --ssh
 ```
+
+This will display a URL - open it in your browser and sign in with Google.
 
 ### Non-NixOS Linux (Ubuntu, Debian, etc.)
 
 Use the helper script since home-manager can't manage system services:
 
 ```bash
-# Interactive (opens browser for auth)
+# Standard setup with Tailscale SSH enabled
 ./scripts/setup-tailscale.sh --ssh
 
-# With auth key (unattended)
-./scripts/setup-tailscale.sh --auth-key tskey-xxx --ssh --hostname my-vm
-
-# Via environment variable
-TAILSCALE_AUTH_KEY=tskey-xxx ./scripts/setup-tailscale.sh --ssh
+# With custom hostname
+./scripts/setup-tailscale.sh --ssh --hostname my-dev-vm
 ```
 
-### Getting an Auth Key
+The script will:
+1. Install Tailscale if not present
+2. Start the daemon
+3. Display an auth URL - open it and sign in with Google
+4. Connect to your tailnet
 
-1. Go to [Tailscale Admin Console](https://login.tailscale.com/admin/settings/keys)
-2. Click "Generate auth key"
-3. Recommended settings for VMs/servers:
-   - Reusable: Yes (for multiple VMs)
-   - Expiration: 90 days (max)
-   - Ephemeral: No (persist across reboots)
-   - Pre-approved: Yes (skip manual approval)
-   - Tags: `tag:server` (optional, for ACLs)
+### NixOS
+
+Tailscale is enabled in the NixOS config. After first boot:
+
+```bash
+sudo tailscale up --ssh
+```
+
+Open the displayed URL and authenticate with Google.
 
 ### Tailscale SSH
 
-Enable Tailscale SSH for passwordless access without managing SSH keys:
-
-```bash
-tailscale up --ssh
-```
-
-Then connect using the Tailscale hostname:
+When you use `--ssh`, Tailscale SSH is enabled for passwordless access:
 
 ```bash
 ssh user@hostname.tailnet-name.ts.net
 ```
+
+No SSH keys needed - authentication is handled by Tailscale.
 
 ## Customization
 
@@ -393,8 +375,10 @@ When provisioning a new machine using this configuration:
    - Linux VM: `nix run home-manager -- switch --flake ~/dotenv#cooper@linux-thin`
    - macOS: `nix run nix-darwin -- switch --flake ~/dotenv#coopers-macbook-pro`
 5. **Set up Tailscale** for network access:
-   - With auth key: `~/dotenv/scripts/setup-tailscale.sh --auth-key $KEY --ssh`
-   - Interactive: `~/dotenv/scripts/setup-tailscale.sh --ssh`
+   - Run: `~/dotenv/scripts/setup-tailscale.sh --ssh`
+   - This displays a URL - the user must open it and authenticate with Google
 6. **Verify** by checking `tailscale status` and `echo $SHELL`
 
 The user's SSH public key is already configured in `nixos/configuration.nix`.
+
+**Note**: Tailscale authentication requires user interaction (Google OAuth). The setup script will provide a URL that the user needs to open in their browser.
