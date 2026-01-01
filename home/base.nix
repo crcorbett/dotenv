@@ -144,4 +144,18 @@
     EDITOR = "vim";
     VISUAL = "vim";
   };
+
+  # Ensure zsh is used even when login shell is bash
+  # On non-NixOS Linux, changing /etc/passwd requires root and shell in /etc/shells.
+  # This pattern is widely used in the Nix community - bash execs into zsh on interactive start.
+  # Safe on macOS where zsh is already default (this only runs if bash starts).
+  programs.bash = {
+    enable = true;
+    initExtra = ''
+      # If running interactively and zsh is available, switch to it
+      if [[ $- == *i* ]] && command -v zsh &>/dev/null; then
+        exec zsh
+      fi
+    '';
+  };
 }
