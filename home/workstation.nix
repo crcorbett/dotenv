@@ -8,6 +8,10 @@
   home.packages = with pkgs; [
     # Additional tools for workstation
     bat
+    
+    # Fonts (for terminal rendering)
+    nerd-fonts.meslo-lg
+    nerd-fonts.jetbrains-mono
   ];
 
   # =============================================================================

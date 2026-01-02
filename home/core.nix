@@ -37,10 +37,6 @@
     
     # Networking
     tailscale
-    
-    # Fonts (for terminal)
-    nerd-fonts.meslo-lg
-    nerd-fonts.jetbrains-mono
   ];
 
   # =============================================================================
