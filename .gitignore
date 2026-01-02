@@ -6,6 +6,7 @@ result-*
 secrets/
 *.secret
 *.key
+.secrets
 
 # OS files
 .DS_Store

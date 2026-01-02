@@ -9,7 +9,6 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     
-    # macOS system configuration
     nix-darwin = {
       url = "github:LnL7/nix-darwin";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -18,99 +17,70 @@
 
   outputs = { self, nixpkgs, home-manager, nix-darwin, ... }:
     let
-      # Supported systems
-      systems = [ "x86_64-linux" "aarch64-linux" "x86_64-darwin" "aarch64-darwin" ];
-      forAllSystems = nixpkgs.lib.genAttrs systems;
-      
-      # Common packages for all systems
-      commonPackages = pkgs: with pkgs; [
-        tmux
-        git
-        curl
-        wget
-        htop
-        jq
-        ripgrep
-        fd
-        tailscale
-      ];
+      lib = nixpkgs.lib;
     in
     {
-      # Development shell - use with `nix develop`
-      devShells = forAllSystems (system:
-        let pkgs = nixpkgs.legacyPackages.${system};
-        in {
-          default = pkgs.mkShell {
-            buildInputs = commonPackages pkgs;
-            shellHook = ''
-              echo "Cooper's dev environment loaded"
-              echo "tmux, tailscale, and tools available"
-            '';
-          };
-        }
-      );
-
-      # Home Manager configurations
+      # =======================================================================
+      # Linux Thin Client
+      # =======================================================================
+      # Usage: nix run home-manager -- switch --flake .#cooper@linux
       homeConfigurations = {
-        # Linux thin (servers, VMs - minimal bash setup)
-        "cooper@linux-thin" = home-manager.lib.homeManagerConfiguration {
+        "cooper@linux" = home-manager.lib.homeManagerConfiguration {
           pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home/thin.nix ./home/linux.nix ];
-        };
-        
-        # Linux full (dev workstations - zsh, neovim, etc.)
-        "cooper@linux-full" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.x86_64-linux;
-          modules = [ ./home/full.nix ./home/linux.nix ];
-        };
-        
-        # macOS thin (Apple Silicon - minimal)
-        "cooper@darwin-thin" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-          modules = [ ./home/thin.nix ./home/darwin.nix ];
-        };
-        
-        # macOS full (Apple Silicon - full dev setup)
-        "cooper@darwin-full" = home-manager.lib.homeManagerConfiguration {
-          pkgs = nixpkgs.legacyPackages.aarch64-darwin;
-          modules = [ ./home/full.nix ./home/darwin.nix ];
+          modules = [
+            ./home/core.nix
+            {
+              home.homeDirectory = "/home/cooper";
+            }
+          ];
         };
       };
 
-      # Darwin (macOS) system configuration
+      # =======================================================================
+      # macOS Workstation
+      # =======================================================================
+      # Usage: darwin-rebuild switch --flake .#coopers-macbook-pro
       darwinConfigurations = {
-        # Full setup for main Mac workstation
         "coopers-macbook-pro" = nix-darwin.lib.darwinSystem {
           system = "aarch64-darwin";
           modules = [
-            ./darwin/configuration.nix
+            ./darwin/system.nix
             home-manager.darwinModules.home-manager
             {
               home-manager.useGlobalPkgs = true;
               home-manager.useUserPackages = true;
-              home-manager.users.cooper = { pkgs, ... }: {
-                imports = [ ./home/full.nix ./home/darwin.nix ];
+              home-manager.users.cooper = { pkgs, lib, ... }: {
+                imports = [ 
+                  ./home/core.nix 
+                  ./home/workstation.nix 
+                ];
+                home.homeDirectory = "/Users/cooper";
+                
+                # 1Password SSH agent (macOS)
+                programs.zsh.initExtra = lib.mkAfter ''
+                  if [[ -S "$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock" ]]; then
+                    export SSH_AUTH_SOCK="$HOME/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+                  fi
+                '';
               };
             }
           ];
         };
       };
 
-      # NixOS configuration (for VMs/servers)
-      nixosConfigurations = {
-        # Thin setup for VMs/servers
-        "development-vm" = nixpkgs.lib.nixosSystem {
-          system = "x86_64-linux";
-          modules = [
-            ./nixos/configuration.nix
-            home-manager.nixosModules.home-manager
-            {
-              home-manager.useGlobalPkgs = true;
-              home-manager.useUserPackages = true;
-              home-manager.users.cooper = { pkgs, ... }: {
-                imports = [ ./home/thin.nix ./home/linux.nix ];
-              };
-            }
+      # =======================================================================
+      # Development Shell
+      # =======================================================================
+      # Usage: nix develop
+      devShells = {
+        x86_64-linux.default = nixpkgs.legacyPackages.x86_64-linux.mkShell {
+          buildInputs = with nixpkgs.legacyPackages.x86_64-linux; [
+            git curl wget htop jq ripgrep fd
+          ];
+        };
+        aarch64-darwin.default = nixpkgs.legacyPackages.aarch64-darwin.mkShell {
+          buildInputs = with nixpkgs.legacyPackages.aarch64-darwin; [
+            git curl wget htop jq ripgrep fd
           ];
         };
       };

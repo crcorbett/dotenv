@@ -1,0 +1,24 @@
+# Cooper's SSH Config
+# Managed by dotenv - https://github.com/crcorbett/dotenv
+
+# =============================================================================
+# 1Password SSH Agent
+# =============================================================================
+Host *
+	# macOS 1Password agent
+	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
+
+# =============================================================================
+# Development VM (Tailscale)
+# =============================================================================
+Host dev-vm
+	HostName 100.126.134.39
+	User cooper
+
+# =============================================================================
+# Global Settings
+# =============================================================================
+Host *
+	ServerAliveInterval 60
+	ServerAliveCountMax 3
+	AddKeysToAgent yes
