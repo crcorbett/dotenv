@@ -39,7 +39,8 @@
     tailscale
     
     # Fonts (for terminal)
-    (nerdfonts.override { fonts = [ "Meslo" "JetBrainsMono" ]; })
+    nerd-fonts.meslo-lg
+    nerd-fonts.jetbrains-mono
   ];
 
   # =============================================================================
