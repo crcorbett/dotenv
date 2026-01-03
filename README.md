@@ -8,7 +8,7 @@ Two configurations:
 
 | Config | Platform | Use Case | Command |
 |--------|----------|----------|---------|
-| `cooper@linux` | Linux x86_64 | VMs, servers (thin client) | `home-manager switch --flake .#cooper@linux` |
+| `cooper@linux` | Linux x86_64 | VMs, servers (headless) | `home-manager switch --flake .#cooper@linux` |
 | `coopers-macbook-pro` | macOS ARM | Workstation (full setup) | `darwin-rebuild switch --flake .#coopers-macbook-pro` |
 
 ## Quick Start
@@ -24,17 +24,13 @@ curl --proto '=https' --tlsv1.2 -sSf -L https://install.determinate.systems/nix 
 ### New Linux VM
 
 ```bash
-# Clone repo
 git clone https://github.com/crcorbett/dotenv.git ~/dotenv
 cd ~/dotenv
 
-# Apply configuration
 nix run home-manager -- switch --flake .#cooper@linux
 
-# Set up Tailscale
 ./scripts/setup-tailscale.sh --ssh
 
-# Create secrets file
 cp .secrets.example ~/.secrets
 # Edit ~/.secrets with your API keys
 ```
@@ -42,14 +38,11 @@ cp .secrets.example ~/.secrets
 ### New macOS Workstation
 
 ```bash
-# Clone repo
 git clone https://github.com/crcorbett/dotenv.git ~/dotenv
 cd ~/dotenv
 
-# Apply configuration
 nix run nix-darwin -- switch --flake .#coopers-macbook-pro
 
-# Create secrets file
 cp .secrets.example ~/.secrets
 # Edit ~/.secrets with your API keys
 
@@ -77,8 +70,9 @@ dotenv/
 ├── flake.lock                # Pinned dependencies
 │
 ├── home/
-│   ├── core.nix              # Shared config (packages, dotfiles, shell)
-│   ├── workstation.nix       # Desktop app configs (macOS only)
+│   ├── core.nix              # Shared: CLI tools, dotfiles, mosh
+│   ├── workstation.nix       # macOS: fonts, app configs (Ghostty/Zed/Cursor)
+│   ├── p10k.zsh              # Powerlevel10k theme
 │   └── dotfiles/
 │       ├── zshrc             # Shell config
 │       ├── p10k.zsh          # Powerlevel10k theme
@@ -91,7 +85,10 @@ dotenv/
 ├── darwin/
 │   └── system.nix            # macOS system preferences
 │
-├── configs/                  # Workstation app configs
+├── nixos/
+│   └── configuration.nix     # NixOS system config (if needed)
+│
+├── configs/                  # Workstation app configs (macOS)
 │   ├── zed/
 │   │   ├── settings.json
 │   │   └── keymap.json
@@ -99,7 +96,8 @@ dotenv/
 │       └── settings.json
 │
 ├── scripts/
-│   └── setup-tailscale.sh    # Tailscale setup for Linux
+│   ├── setup-tailscale.sh    # Tailscale install + auth
+│   └── exit_node_setup.sh    # Configure VM as exit node
 │
 ├── APPS.md                   # Manual app installation list
 ├── .secrets.example          # Template for secrets file
@@ -112,11 +110,12 @@ dotenv/
 
 - **Shell**: zsh + oh-my-zsh + Powerlevel10k
 - **Tools**: git, gh, ripgrep, fd, fzf, eza, zoxide, delta, lazygit, neovim
+- **Network**: mosh (low-latency SSH for high-latency connections)
 - **Git**: 1Password SSH commit signing
-- **Fonts**: Nerd Fonts (Meslo, JetBrains Mono)
 
 ### macOS Workstation (workstation.nix + darwin/system.nix)
 
+- **Fonts**: Nerd Fonts (Meslo, JetBrains Mono)
 - **App configs**: Ghostty, Zed, Cursor
 - **System prefs**: Dock autohide, dark mode, text replacements
 - **Services**: Tailscale, Touch ID for sudo
@@ -126,18 +125,65 @@ dotenv/
 API keys and tokens are stored in `~/.secrets` (not in repo):
 
 ```bash
-# Copy template
 cp .secrets.example ~/.secrets
-
-# Edit with your values
 vim ~/.secrets
 ```
 
 The zshrc automatically sources this file if it exists.
 
-## Key Bindings
+## Tailscale
 
-### Shell Aliases
+### Linux VM (Client)
+
+```bash
+./scripts/setup-tailscale.sh --ssh
+```
+
+Opens a URL - authenticate with Google.
+
+### Linux VM (Exit Node)
+
+To configure a VM as a Tailscale exit node (VPN endpoint):
+
+```bash
+./scripts/setup-tailscale.sh --exit-node
+./scripts/exit_node_setup.sh
+```
+
+Then approve the exit node in [Tailscale admin console](https://login.tailscale.com/admin/machines).
+
+The exit node script configures:
+- IP forwarding (IPv4 + IPv6)
+- UDP GRO optimization for better throughput
+- Persistence across reboots
+
+### macOS
+
+Tailscale is enabled via nix-darwin. After first run:
+
+```bash
+tailscale up --ssh
+```
+
+### Using an Exit Node
+
+From any Tailscale device:
+
+```bash
+tailscale up --exit-node=<exit-node-ip>
+```
+
+## Mosh (Mobile Shell)
+
+For high-latency connections (e.g., UK → Australia), use mosh instead of SSH:
+
+```bash
+mosh user@hostname
+```
+
+Mosh provides local echo and handles connection interruptions gracefully.
+
+## Shell Aliases
 
 | Alias | Command |
 |-------|---------|
@@ -148,31 +194,13 @@ The zshrc automatically sources this file if it exists.
 | `lg` | `lazygit` |
 | `vim`, `v` | `nvim` |
 
-### Text Replacements (macOS)
+## Text Replacements (macOS)
 
 | Type | Expands To |
 |------|------------|
 | `@@` | coopercorbett@gmail.com |
 | `@&` | cooper.corbett@tilt.legal |
 | `omw` | On my way! |
-
-## Tailscale
-
-### Linux VM
-
-```bash
-./scripts/setup-tailscale.sh --ssh
-```
-
-Opens a URL - authenticate with Google.
-
-### macOS
-
-Tailscale is enabled via nix-darwin. After first run:
-
-```bash
-tailscale up --ssh
-```
 
 ## Updating Nix Packages
 
@@ -187,6 +215,7 @@ darwin-rebuild switch --flake .#coopers-macbook-pro  # or home-manager for Linux
 Edit the appropriate file:
 
 - **All platforms**: `home/core.nix` → `home.packages`
+- **macOS only**: `home/workstation.nix` → `home.packages`
 - **macOS system**: `darwin/system.nix` → `environment.systemPackages`
 
 ## License
