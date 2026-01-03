@@ -70,6 +70,7 @@ fi
 # Tools
 # =============================================================================
 # opencode
+export OPENCODE_EXPERIMENTAL="true"
 [[ -d "$HOME/.opencode/bin" ]] && export PATH="$HOME/.opencode/bin:$PATH"
 
 # LM Studio (macOS)
@@ -82,6 +83,9 @@ alias ll="ls -la"
 alias gs="git status"
 alias gp="git push"
 alias gl="git pull"
+
+# AI coding
+alias vibe-claude="claude --dangerously-skip-permissions"
 
 # tmux
 alias ta="tmux attach -t"
