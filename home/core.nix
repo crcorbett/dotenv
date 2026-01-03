@@ -127,14 +127,17 @@
   # =============================================================================
   home.activation = {
     installAiClis = lib.hm.dag.entryAfter ["writeBoundary"] ''
-      # Claude Code
-      if ! command -v claude &>/dev/null; then
+      # Ensure nix-provided tools are in PATH for install scripts
+      export PATH="${pkgs.curl}/bin:${pkgs.wget}/bin:${pkgs.coreutils}/bin:$PATH"
+      
+      # Claude Code (check by file path, not command -v)
+      if [ ! -x "$HOME/.local/bin/claude" ]; then
         echo "Installing Claude Code..."
-        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh | $DRY_RUN_CMD sh
+        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh | $DRY_RUN_CMD bash
       fi
 
-      # OpenCode
-      if ! command -v opencode &>/dev/null; then
+      # OpenCode (check by file path)
+      if [ ! -x "$HOME/.opencode/bin/opencode" ]; then
         echo "Installing OpenCode..."
         $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install | $DRY_RUN_CMD bash
       fi
