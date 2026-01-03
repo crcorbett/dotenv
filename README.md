@@ -223,3 +223,4 @@ Edit the appropriate file:
 Personal configuration - feel free to fork and adapt.
 # Test
 # Debug test
+# Fixed signing
