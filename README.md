@@ -252,21 +252,13 @@ Uses a custom script (`op-ssh-sign-headless`) that fetches the SSH key from 1Pas
 
 **Setup:**
 
-1. Create a 1Password service account at [developer-tools/service-accounts](https://my.1password.com/developer-tools/service-accounts)
-   - Grant access to the vault containing your SSH signing key
-
-2. Add the token to `~/.secrets` (this file is auto-sourced by zshrc):
+1. Sign in to 1Password CLI ([manual sign-in docs](https://developer.1password.com/docs/cli/sign-in-manually)):
    ```bash
-   # In ~/.secrets
-   export OP_SERVICE_ACCOUNT_TOKEN="ops_your-token-here"
+   op account add --address my.1password.com --email you@example.com
+   eval $(op signin)
    ```
 
-3. Restart your shell or run:
-   ```bash
-   source ~/.secrets
-   ```
-
-4. Verify it works:
+2. Verify it works:
    ```bash
    op vault list  # Should show your vaults
    ```
@@ -284,8 +276,7 @@ git commit
 ```
 
 **Requirements:**
-- `OP_SERVICE_ACCOUNT_TOKEN` environment variable set (via `~/.secrets`)
-- Service account with access to vault containing SSH key ("Development" vault)
+- 1Password CLI signed in (`op signin`)
 - 1Password item named "Github commit signing" in "Development" vault
 
 ### GitHub Setup
