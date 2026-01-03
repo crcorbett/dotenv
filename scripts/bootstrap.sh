@@ -11,6 +11,14 @@ set -euo pipefail
 echo "🚀 Bootstrapping development environment..."
 
 # -----------------------------------------------------------------------------
+# System packages (installed via apt for PATH availability)
+# -----------------------------------------------------------------------------
+echo "📦 Installing system packages..."
+sudo apt-get update -qq
+sudo apt-get install -y -qq mosh
+echo "✅ System packages installed (mosh)"
+
+# -----------------------------------------------------------------------------
 # 1Password CLI
 # -----------------------------------------------------------------------------
 if ! command -v op &>/dev/null; then

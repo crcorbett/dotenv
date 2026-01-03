@@ -42,7 +42,7 @@
     
     # Networking
     tailscale
-    mosh
+    # Note: mosh installed via apt in bootstrap.sh (needs to be in system PATH for mosh-server)
   ] ++ lib.optionals stdenv.isLinux [
     # Docker (macOS uses OrbStack instead)
     docker
