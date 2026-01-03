@@ -1,0 +1,74 @@
+#!/bin/bash
+# op-ssh-sign-headless: Git commit signing using 1Password CLI
+# For headless VMs without 1Password desktop app
+#
+# This script fetches the SSH private key from 1Password on-demand,
+# signs the commit, then removes the key from disk.
+
+set -euo pipefail
+
+# 1Password item reference
+OP_ITEM="Github commit signing"
+OP_VAULT="Development"
+OP_FIELD="private key"
+
+# Temp file for the key (use mktemp for security)
+KEY_FILE=$(mktemp /tmp/op-ssh-sign.XXXXXX)
+PUB_KEY_FILE="${KEY_FILE}.pub"
+
+# Cleanup on exit
+cleanup() {
+    rm -f "$KEY_FILE" "$PUB_KEY_FILE"
+}
+trap cleanup EXIT
+
+# Fetch private key from 1Password (strip quotes and leading/trailing whitespace)
+op item get "$OP_ITEM" --vault "$OP_VAULT" --fields "$OP_FIELD" --reveal | tr -d '"' | sed '/^$/d' > "$KEY_FILE"
+chmod 600 "$KEY_FILE"
+
+# Fetch public key from 1Password
+op item get "$OP_ITEM" --vault "$OP_VAULT" --fields "public key" > "$PUB_KEY_FILE"
+chmod 644 "$PUB_KEY_FILE"
+
+# ssh-keygen expects: ssh-keygen -Y sign -n <namespace> -f <key> < data
+# Git calls this script with arguments like: -Y sign -n git -f /path/to/key
+# We need to replace the key path with our temp key
+
+# Parse arguments:
+# - Replace the key file path after -f with our temp key
+# - Capture -U output file path (git expects signature there)
+# - Remove -U flag from args (we'll write to file manually)
+args=()
+skip_next=false
+OUTPUT_FILE=""
+capture_output_path=false
+
+for arg in "$@"; do
+    if $skip_next; then
+        # Replace the original key path with our temp key
+        args+=("$KEY_FILE")
+        skip_next=false
+    elif $capture_output_path; then
+        # Capture the output file path from -U
+        OUTPUT_FILE="$arg"
+        capture_output_path=false
+    elif [[ "$arg" == "-f" ]]; then
+        args+=("$arg")
+        skip_next=true
+    elif [[ "$arg" == "-U" ]]; then
+        # Don't add -U to args, but capture the next arg as output path
+        capture_output_path=true
+    else
+        args+=("$arg")
+    fi
+done
+
+# Call ssh-keygen and capture/redirect output appropriately
+if [[ -n "$OUTPUT_FILE" ]]; then
+    # Git writes data to sign in OUTPUT_FILE, expects signature in OUTPUT_FILE.sig
+    # We pipe the data to ssh-keygen (since we removed -U flag)
+    ssh-keygen "${args[@]}" < "$OUTPUT_FILE" > "${OUTPUT_FILE}.sig" 2>/dev/null
+else
+    # Output to stdout (data comes from stdin)
+    ssh-keygen "${args[@]}"
+fi

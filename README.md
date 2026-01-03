@@ -218,10 +218,87 @@ Edit the appropriate file:
 - **macOS only**: `home/workstation.nix` → `home.packages`
 - **macOS system**: `darwin/system.nix` → `environment.systemPackages`
 
+## Git Commit Signing
+
+All commits are automatically signed using SSH keys stored in 1Password. No special commands needed — `git commit` just works.
+
+### Architecture
+
+```
+gitconfig (base)
+├── commit.gpgsign = true             # Auto-sign all commits
+├── user.signingkey = ssh-ed25519...  # Public key
+├── gpg.format = ssh
+│
+├── [includeIf "gitdir:/Users/"]      # macOS
+│   └── gitconfig-macos
+│       └── program = /Applications/1Password.app/.../op-ssh-sign
+│
+└── [includeIf "gitdir:/home/"]       # Linux
+    └── gitconfig-linux
+        └── program = ~/.local/bin/op-ssh-sign-headless
+```
+
+### macOS (Desktop)
+
+Uses 1Password desktop app's built-in `op-ssh-sign` binary. Requires:
+- 1Password desktop app installed
+- SSH agent enabled in 1Password settings
+- SSH key added to 1Password
+
+### Linux Headless VMs
+
+Uses a custom script (`op-ssh-sign-headless`) that fetches the SSH key from 1Password CLI on-demand. The private key only exists in memory during signing.
+
+**Setup:**
+
+1. Create a 1Password service account with access to the vault containing your SSH key
+2. Add the token to `~/.secrets`:
+   ```bash
+   export OP_SERVICE_ACCOUNT_TOKEN="your-token"
+   ```
+
+3. Create the signing script at `~/.local/bin/op-ssh-sign-headless`:
+   ```bash
+   mkdir -p ~/.local/bin
+   # Copy script from this repo or create manually (see home/dotfiles/op-ssh-sign-headless)
+   chmod +x ~/.local/bin/op-ssh-sign-headless
+   ```
+
+**How it works:**
+```
+git commit
+  → op-ssh-sign-headless
+    → fetches private key from 1Password (op CLI)
+    → signs commit with ssh-keygen
+    → deletes key from disk immediately
+  → signed commit created
+```
+
+**Requirements:**
+- `op` CLI installed and authenticated
+- Service account with access to vault containing SSH key
+- 1Password item named "Github commit signing" in "Development" vault
+
+### GitHub Setup
+
+For commits to show as "Verified" on GitHub:
+
+1. Go to [GitHub SSH Keys](https://github.com/settings/keys)
+2. Click **New SSH key**
+3. Set **Key type: Signing Key** (not Authentication)
+4. Paste your public key
+5. Ensure your commit email matches a verified email on your GitHub account
+
+### Troubleshooting
+
+| Issue | Solution |
+|-------|----------|
+| "Unverified" on GitHub | Add key as **Signing Key** (not just Authentication) in GitHub settings |
+| "Permission denied" on gitconfig | Edit source in `~/dotenv/home/dotfiles/`, rebuild with `home-manager switch` |
+| Signing fails on Linux | Check `OP_SERVICE_ACCOUNT_TOKEN` is set: `op vault list` |
+| "Couldn't get agent socket" | The headless script handles this — ensure you're using the latest version |
+
 ## License
 
 Personal configuration - feel free to fork and adapt.
-# Test
-# Debug test
-# Fixed signing
-# Signed from headless VM Sat Jan  3 16:07:53 UTC 2026

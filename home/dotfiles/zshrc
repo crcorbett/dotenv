@@ -1,20 +1,8 @@
-# Cooper's zshrc
+# Cooper's zshrc.local
 # Managed by dotenv - https://github.com/crcorbett/dotenv
-
-# =============================================================================
-# Powerlevel10k Instant Prompt (must be at top)
-# =============================================================================
-if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
-  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
-fi
-
-# =============================================================================
-# Oh My Zsh
-# =============================================================================
-export ZSH="$HOME/.oh-my-zsh"
-ZSH_THEME="powerlevel10k/powerlevel10k"
-plugins=(git)
-source $ZSH/oh-my-zsh.sh
+# 
+# NOTE: This file is sourced by home-manager's generated .zshrc
+# Oh-my-zsh and powerlevel10k are managed by home-manager (see home/core.nix)
 
 # =============================================================================
 # Secrets (API keys, tokens - not in repo)
