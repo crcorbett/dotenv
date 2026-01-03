@@ -59,6 +59,11 @@
     ".gitconfig-macos".source = ./dotfiles/gitconfig-macos;
     ".gitconfig-linux".source = ./dotfiles/gitconfig-linux;
     ".ssh/config".source = ./dotfiles/ssh_config;
+
+    # OpenCode
+    ".config/opencode/opencode.jsonc".source = ./dotfiles/opencode/opencode.jsonc;
+    ".config/opencode/oh-my-opencode.json".source = ./dotfiles/opencode/oh-my-opencode.json;
+    ".config/opencode/package.json".source = ./dotfiles/opencode/package.json;
   };
 
   # =============================================================================
