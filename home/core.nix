@@ -53,7 +53,7 @@
   # Dotfiles
   # =============================================================================
   home.file = {
-    ".zshrc".source = ./dotfiles/zshrc;
+    ".zshrc.local".source = ./dotfiles/zshrc;
     ".p10k.zsh".source = ./dotfiles/p10k.zsh;
     ".gitconfig".source = ./dotfiles/gitconfig;
     ".gitconfig-macos".source = ./dotfiles/gitconfig-macos;
@@ -62,12 +62,22 @@
   };
 
   # =============================================================================
-  # Zsh (for installing zsh itself)
+  # Zsh
   # =============================================================================
   programs.zsh = {
     enable = true;
-    # Config is managed via dotfiles/zshrc
+    
+    # Source custom zshrc for additional config (p10k, secrets, etc.)
+    initContent = ''
+      [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
+    '';
   };
+  
+  # Add external CLI paths
+  home.sessionPath = [
+    "$HOME/.local/bin"
+    "$HOME/.opencode/bin"
+  ];
 
   # =============================================================================
   # Oh My Zsh + Powerlevel10k
