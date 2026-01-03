@@ -249,45 +249,31 @@ Uses 1Password desktop app's built-in `op-ssh-sign` binary. Requires:
 
 ### Linux Headless VMs
 
-Uses a custom script (`op-ssh-sign-headless`) that fetches the SSH key from 1Password CLI on-demand. The private key only exists in memory during signing.
+Uses a local SSH key stored at `~/.ssh/id_ed25519_signing`. Simpler than the 1Password CLI approach and doesn't require re-authentication.
 
-**First-time setup** — add your 1Password accounts ([manual sign-in docs](https://developer.1password.com/docs/cli/sign-in-manually)):
+**First-time setup** — extract the signing key from 1Password:
 
 ```bash
-# Add personal account
+# Sign in to 1Password CLI
 op account add --address my.1password.com --email coopercorbett@gmail.com
+eval $(op signin)
 
-# Add work account  
-op account add --address tiltlegal.1password.com --email cooper.corbett@tilt.legal
-```
+# Extract the signing key
+op item get "Github commit signing" --vault Development --fields "private key" --reveal | tr -d '"' | sed '/^$/d' > ~/.ssh/id_ed25519_signing
+chmod 600 ~/.ssh/id_ed25519_signing
 
-**Sign in** — use the `signin` alias (defined in home-manager) to authenticate both accounts:
-
-```bash
-signin  # Runs: eval "$(op signin --account my)" && eval "$(op signin --account tiltlegal)"
+op item get "Github commit signing" --vault Development --fields "public key" > ~/.ssh/id_ed25519_signing.pub
+chmod 644 ~/.ssh/id_ed25519_signing.pub
 ```
 
 **Verify it works:**
 
 ```bash
-op vault list  # Should show vaults from both accounts
+git commit --allow-empty -m "test signing"
+git log --show-signature -1
 ```
 
-The signing script (`~/.local/bin/op-ssh-sign-headless`) is automatically installed by home-manager.
-
-**How it works:**
-```
-git commit
-  → op-ssh-sign-headless
-    → fetches private key from 1Password (op CLI)
-    → signs commit with ssh-keygen
-    → deletes key from disk immediately
-  → signed commit created
-```
-
-**Requirements:**
-- 1Password CLI signed in (`signin` alias)
-- 1Password item named "Github commit signing" in "Development" vault
+The gitconfig-linux overrides the signing key path to use the local file.
 
 ### GitHub Setup
 

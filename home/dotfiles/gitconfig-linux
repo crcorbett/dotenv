@@ -1,4 +1,4 @@
-[gpg "ssh"]
-	# Headless: uses 1Password CLI to fetch key on-demand
-	# Desktop: would use /opt/1Password/op-ssh-sign
-	program = ~/.local/bin/op-ssh-sign-headless
+# Linux: use local SSH key for signing (simpler than 1Password CLI wrapper)
+# Key is stored at ~/.ssh/id_ed25519_signing
+[user]
+	signingkey = ~/.ssh/id_ed25519_signing.pub
