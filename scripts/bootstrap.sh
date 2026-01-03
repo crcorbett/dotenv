@@ -8,6 +8,11 @@ set -euo pipefail
 # Usage: ./scripts/bootstrap.sh
 # =============================================================================
 
+if [[ "$OSTYPE" != "linux-gnu"* ]]; then
+  echo "❌ This script is for Linux only. Use darwin-rebuild on macOS."
+  exit 1
+fi
+
 echo "🚀 Bootstrapping development environment..."
 
 # -----------------------------------------------------------------------------
