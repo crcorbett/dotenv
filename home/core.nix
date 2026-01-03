@@ -18,8 +18,10 @@
     curl
     wget
     htop
+    btop
     jq
     tree
+    tmux
     
     # Search & navigation
     ripgrep
@@ -35,9 +37,16 @@
     # Editor
     neovim
     
+    # Python tooling
+    uv
+    
     # Networking
     tailscale
     mosh
+  ] ++ lib.optionals stdenv.isLinux [
+    # Docker (macOS uses OrbStack instead)
+    docker
+    docker-compose
   ];
 
   # =============================================================================
@@ -109,6 +118,31 @@
       # If running interactively and zsh is available, switch to it
       if [[ $- == *i* ]] && command -v zsh &>/dev/null; then
         exec zsh
+      fi
+    '';
+  };
+
+  # =============================================================================
+  # AI Coding CLIs (installed outside Nix for auto-updates)
+  # =============================================================================
+  home.activation = {
+    installAiClis = lib.hm.dag.entryAfter ["writeBoundary"] ''
+      # Claude Code
+      if ! command -v claude &>/dev/null; then
+        echo "Installing Claude Code..."
+        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://claude.ai/install.sh | $DRY_RUN_CMD sh
+      fi
+
+      # OpenCode
+      if ! command -v opencode &>/dev/null; then
+        echo "Installing OpenCode..."
+        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install | $DRY_RUN_CMD bash
+      fi
+
+      # Codex (OpenAI) - requires npm
+      if ! command -v codex &>/dev/null && command -v npm &>/dev/null; then
+        echo "Installing Codex..."
+        $DRY_RUN_CMD npm install -g @openai/codex
       fi
     '';
   };
