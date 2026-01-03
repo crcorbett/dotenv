@@ -60,6 +60,12 @@
     ".gitconfig-linux".source = ./dotfiles/gitconfig-linux;
     ".ssh/config".source = ./dotfiles/ssh_config;
 
+    # 1Password headless SSH signing (Linux VMs without desktop app)
+    ".local/bin/op-ssh-sign-headless" = {
+      source = ./dotfiles/op-ssh-sign-headless;
+      executable = true;
+    };
+
     # OpenCode
     ".config/opencode/opencode.jsonc".source = ./dotfiles/opencode/opencode.jsonc;
     ".config/opencode/oh-my-opencode.json".source = ./dotfiles/opencode/oh-my-opencode.json;
