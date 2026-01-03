@@ -193,6 +193,7 @@ Mosh provides local echo and handles connection interruptions gracefully.
 | `gl` | `git pull` |
 | `lg` | `lazygit` |
 | `vim`, `v` | `nvim` |
+| `signin` | Sign in to 1Password CLI (personal + work) |
 
 ## Text Replacements (macOS)
 
@@ -250,18 +251,27 @@ Uses 1Password desktop app's built-in `op-ssh-sign` binary. Requires:
 
 Uses a custom script (`op-ssh-sign-headless`) that fetches the SSH key from 1Password CLI on-demand. The private key only exists in memory during signing.
 
-**Setup:**
+**First-time setup** — add your 1Password accounts ([manual sign-in docs](https://developer.1password.com/docs/cli/sign-in-manually)):
 
-1. Sign in to 1Password CLI ([manual sign-in docs](https://developer.1password.com/docs/cli/sign-in-manually)):
-   ```bash
-   op account add --address my.1password.com --email you@example.com
-   eval $(op signin)
-   ```
+```bash
+# Add personal account
+op account add --address my.1password.com --email coopercorbett@gmail.com
 
-2. Verify it works:
-   ```bash
-   op vault list  # Should show your vaults
-   ```
+# Add work account  
+op account add --address tiltlegal.1password.com --email cooper.corbett@tilt.legal
+```
+
+**Sign in** — use the `signin` alias (defined in home-manager) to authenticate both accounts:
+
+```bash
+signin  # Runs: eval "$(op signin --account my)" && eval "$(op signin --account tiltlegal)"
+```
+
+**Verify it works:**
+
+```bash
+op vault list  # Should show vaults from both accounts
+```
 
 The signing script (`~/.local/bin/op-ssh-sign-headless`) is automatically installed by home-manager.
 
@@ -276,7 +286,7 @@ git commit
 ```
 
 **Requirements:**
-- 1Password CLI signed in (`op signin`)
+- 1Password CLI signed in (`signin` alias)
 - 1Password item named "Github commit signing" in "Development" vault
 
 ### GitHub Setup

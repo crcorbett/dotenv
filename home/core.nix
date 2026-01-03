@@ -128,6 +128,9 @@
     lg = "lazygit";
     vim = "nvim";
     v = "nvim";
+    
+    # 1Password CLI sign-in (personal + work accounts)
+    signin = ''eval "$(op signin --account my)" && eval "$(op signin --account tiltlegal)"'';
   };
 
   # =============================================================================
