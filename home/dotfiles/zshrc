@@ -5,6 +5,13 @@
 # Oh-my-zsh and powerlevel10k are managed by home-manager (see home/core.nix)
 
 # =============================================================================
+# Terminal Color Support
+# =============================================================================
+# Ensure truecolor (24-bit color) is advertised to applications
+# Required for proper theming in tools like OpenCode, especially inside tmux
+export COLORTERM=truecolor
+
+# =============================================================================
 # Secrets (API keys, tokens - not in repo)
 # =============================================================================
 [[ -f "$HOME/.secrets" ]] && source "$HOME/.secrets"
