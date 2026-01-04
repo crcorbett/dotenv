@@ -26,9 +26,7 @@
     # Search & navigation
     ripgrep
     fd
-    fzf
-    eza
-    zoxide
+    # fzf, eza, zoxide configured via programs.* for shell integration
     
     # Git tools
     delta
@@ -73,6 +71,16 @@
   programs.zsh = {
     enable = true;
     
+    # Source nix daemon for standalone home-manager on Linux
+    # This ensures nix-profile/bin is in PATH before zsh starts
+    # (nix-darwin handles this automatically, but standalone home-manager doesn't)
+    envExtra = lib.optionalString pkgs.stdenv.isLinux ''
+      # Source nix daemon for PATH setup (standalone home-manager on Linux)
+      if [ -e '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh' ]; then
+        . '/nix/var/nix/profiles/default/etc/profile.d/nix-daemon.sh'
+      fi
+    '';
+    
     # Source custom zshrc for additional config (p10k, secrets, etc.)
     initContent = ''
       [[ -f "$HOME/.zshrc.local" ]] && source "$HOME/.zshrc.local"
@@ -100,6 +108,32 @@
       file = "share/zsh-powerlevel10k/powerlevel10k.zsh-theme";
     }
   ];
+
+  # =============================================================================
+  # Tool Integrations (with shell hooks)
+  # =============================================================================
+  # Using programs.* for automatic shell integration instead of just packages
+  
+  programs.fzf = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  
+  programs.eza = {
+    enable = true;
+    enableZshIntegration = true;
+    extraOptions = [ "--group-directories-first" "--icons" ];
+  };
+  
+  programs.zoxide = {
+    enable = true;
+    enableZshIntegration = true;
+  };
+  
+  programs.direnv = {
+    enable = true;
+    nix-direnv.enable = true;  # Better nix integration
+  };
 
   # =============================================================================
   # Session Variables

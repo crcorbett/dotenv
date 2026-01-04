@@ -1,18 +1,18 @@
 # Cooper's SSH Config
 # Managed by dotenv - https://github.com/crcorbett/dotenv
+#
+# NOTE: 1Password SSH bookmarks and agent config are managed locally on macOS
+# via ~/.ssh/config (not tracked in dotfiles). See README for setup instructions.
 
 # =============================================================================
-# 1Password SSH Agent
+# Development VMs (Tailscale)
 # =============================================================================
-Host *
-	# macOS 1Password agent
-	IdentityAgent "~/Library/Group Containers/2BUA8C4S2C.com.1password/t/agent.sock"
-
-# =============================================================================
-# Development VM (Tailscale)
-# =============================================================================
-Host dev-vm
+Host dev-vm development-vm-cooper
 	HostName 100.126.134.39
+	User cooper
+
+Host dev-vm-uk development-vm-cooper-uk
+	HostName 100.105.217.122
 	User cooper
 
 # =============================================================================
