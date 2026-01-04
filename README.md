@@ -100,6 +100,7 @@ dotenv/
 │   └── exit_node_setup.sh    # Configure VM as exit node
 │
 ├── APPS.md                   # Manual app installation list
+├── SSH_SETUP.md              # 1Password SSH setup guide
 ├── .secrets.example          # Template for secrets file
 └── README.md
 ```
@@ -109,8 +110,9 @@ dotenv/
 ### Both Platforms (core.nix)
 
 - **Shell**: zsh + oh-my-zsh + Powerlevel10k
-- **Tools**: git, gh, ripgrep, fd, fzf, eza, zoxide, delta, lazygit, neovim
+- **Tools**: git, gh, ripgrep, fd, fzf, eza, zoxide, delta, lazygit, neovim, direnv
 - **Network**: mosh (low-latency SSH for high-latency connections)
+- **SSH**: 1Password integration (see [SSH_SETUP.md](SSH_SETUP.md))
 - **Git**: 1Password SSH commit signing
 
 ### macOS Workstation (workstation.nix + darwin/system.nix)
@@ -219,6 +221,10 @@ Edit the appropriate file:
 - **macOS only**: `home/workstation.nix` → `home.packages`
 - **macOS system**: `darwin/system.nix` → `environment.systemPackages`
 
+## SSH & Git Authentication
+
+For detailed SSH setup instructions (including 1Password SSH agent, SSH bookmarks, and troubleshooting), see **[SSH_SETUP.md](SSH_SETUP.md)**.
+
 ## Git Commit Signing
 
 All commits are automatically signed using SSH keys stored in 1Password. No special commands needed — `git commit` just works.
@@ -255,11 +261,10 @@ Uses a local SSH key stored at `~/.ssh/id_ed25519_signing`. Simpler than the 1Pa
 
 ```bash
 # Sign in to 1Password CLI
-op account add --address my.1password.com --email coopercorbett@gmail.com
-eval $(op signin)
+eval $(op signin --account my)
 
 # Extract the signing key
-op item get "Github commit signing" --vault Development --fields "private key" --reveal | tr -d '"' | sed '/^$/d' > ~/.ssh/id_ed25519_signing
+op item get "Github commit signing" --vault Development --fields "private key" --reveal > ~/.ssh/id_ed25519_signing
 chmod 600 ~/.ssh/id_ed25519_signing
 
 op item get "Github commit signing" --vault Development --fields "public key" > ~/.ssh/id_ed25519_signing.pub
@@ -274,6 +279,8 @@ git log --show-signature -1
 ```
 
 The gitconfig-linux overrides the signing key path to use the local file.
+
+> **Note**: For SSH authentication setup (not commit signing), see [SSH_SETUP.md](SSH_SETUP.md).
 
 ### GitHub Setup
 
@@ -290,9 +297,10 @@ For commits to show as "Verified" on GitHub:
 | Issue | Solution |
 |-------|----------|
 | "Unverified" on GitHub | Add key as **Signing Key** (not just Authentication) in GitHub settings |
-| "Permission denied" on gitconfig | Edit source in `~/dotenv/home/dotfiles/`, rebuild with `home-manager switch` |
-| Signing fails on Linux | Check `OP_SERVICE_ACCOUNT_TOKEN` is set: `op vault list` |
-| "Couldn't get agent socket" | The headless script handles this — ensure you're using the latest version |
+| "Permission denied" on gitconfig | Edit source in `~/dotfiles/home/dotfiles/`, rebuild with `home-manager switch` |
+| Signing fails on Linux | Ensure `~/.ssh/id_ed25519_signing` exists (see extraction steps above) |
+| "Too many authentication failures" | Set up SSH Bookmarks — see [SSH_SETUP.md](SSH_SETUP.md#ssh-bookmarks-solving-the-6-key-limit) |
+| Shell not found on Linux VM | Run `home-manager switch` to fix nix PATH — see [SSH_SETUP.md](SSH_SETUP.md#troubleshooting) |
 
 ## License
 
