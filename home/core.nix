@@ -91,6 +91,7 @@
   home.sessionPath = [
     "$HOME/.local/bin"
     "$HOME/.opencode/bin"
+    "$HOME/.bun/bin"
   ];
 
   # =============================================================================
@@ -202,6 +203,20 @@
       if [ ! -x "$HOME/.opencode/bin/opencode" ]; then
         echo "Installing OpenCode..."
         $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://opencode.ai/install | $DRY_RUN_CMD bash
+      fi
+
+      # Bun (JavaScript runtime & package manager)
+      if [ ! -x "$HOME/.bun/bin/bun" ]; then
+        echo "Installing Bun..."
+        $DRY_RUN_CMD ${pkgs.curl}/bin/curl -fsSL https://bun.sh/install | $DRY_RUN_CMD bash
+      fi
+
+      # Turborepo (installed via bun)
+      if [ -x "$HOME/.bun/bin/bun" ]; then
+        if ! "$HOME/.bun/bin/bun" pm ls -g 2>/dev/null | grep -q "turbo@"; then
+          echo "Installing Turborepo..."
+          $DRY_RUN_CMD "$HOME/.bun/bin/bun" add -g turbo
+        fi
       fi
 
       # Codex (OpenAI) - requires npm
