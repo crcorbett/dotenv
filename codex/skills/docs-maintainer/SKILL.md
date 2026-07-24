@@ -14,9 +14,9 @@ durable semantic owner and only the pointers that must lead to it.
    change, repository, environment, and write authority. Do not infer authority
    to mutate providers, publish, release, or push from permission to edit docs.
 2. Read the repository-local `docs-maintainer` profile completely when one is
-   present. It owns repository paths, commands, generated-document boundaries,
-   mirrors, exceptions, and archive policy. The global skill supplies method,
-   never local truth.
+   present at `references/repository-profile.md`. It owns repository paths,
+   commands, generated-document boundaries, mirrors, exceptions, and archive
+   policy. The global skill supplies method, never local truth.
 3. If no local profile exists, derive a temporary impact map from the root
    `README*`, `docs/README*`, applicable package/app READMEs, active SPEC/tasks,
    configuration, and changed implementation. Record missing ownership as a

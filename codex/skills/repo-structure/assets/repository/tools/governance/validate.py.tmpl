@@ -5,7 +5,9 @@ from __future__ import annotations
 
 import hashlib
 import json
+import os
 import re
+import stat
 import sys
 from pathlib import Path
 
@@ -13,6 +15,54 @@ from pathlib import Path
 def fail(invariant: str, target: str, recovery: str) -> None:
     print(json.dumps({"status":"failed","invariant":invariant,"target":target,"recovery":recovery,"details":None,"postcondition":"not established","nonClaims":["No repository verification claim was established."]}))
     raise SystemExit(1)
+
+
+repository_skills = (
+    "docs-maintainer",
+    "effect-client-wrapper",
+    "package-structure",
+    "prd-implementer",
+    "prd-review",
+    "prd-writer",
+)
+generated_skill_overlays = {
+    "docs-maintainer": ("references/repository-profile.md",),
+    "package-structure": ("references/repository-profile.md",),
+}
+
+
+def skill_tree_receipt(skill_root: Path, excluded: tuple[str, ...]) -> dict[str, object]:
+    entries: dict[str, dict[str, object]] = {}
+    excluded_paths = set(excluded)
+    for path in sorted(skill_root.rglob("*")):
+        relative = path.relative_to(skill_root)
+        key = relative.as_posix()
+        if (
+            key in excluded_paths
+            or ".DS_Store" in relative.parts
+            or "__pycache__" in relative.parts
+            or path.suffix == ".pyc"
+        ):
+            continue
+        if path.is_symlink():
+            entries[key] = {"kind": "symlink", "target": os.readlink(path)}
+        elif path.is_file():
+            entries[key] = {
+                "kind": "file",
+                "mode": stat.S_IMODE(path.stat().st_mode),
+                "sha256": hashlib.sha256(path.read_bytes()).hexdigest(),
+            }
+        elif not path.is_dir():
+            fail(
+                "repository skill tree contains only files, directories, and links",
+                str(path),
+                "remove the unsupported filesystem entry and rerender",
+            )
+    encoded = json.dumps(entries, sort_keys=True, separators=(",", ":")).encode()
+    return {
+        "entryCount": len(entries),
+        "treeDigest": hashlib.sha256(encoded).hexdigest(),
+    }
 
 
 root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve(strict=True)
@@ -80,6 +130,68 @@ elif lockfile.get("status") != "not-generated" or lockfile.get("sha256") is not 
     fail("rendered phase does not imply a lockfile", str(receipt_path), "record not-generated or finalize after bun install")
 if not receipt.get("limitations") or not receipt.get("nonClaims"):
     fail("render receipt states limitations and non-claims", str(receipt_path), "add explicit limitations and nonClaims")
+
+skill_baseline = receipt.get("skillBaseline")
+if not isinstance(skill_baseline, dict):
+    fail(
+        "render receipt records the canonical skill baseline",
+        str(receipt_path),
+        "rerender from the canonical complete skill folders",
+    )
+recorded_skills = skill_baseline.get("skills")
+if not isinstance(recorded_skills, dict) or set(recorded_skills) != set(repository_skills):
+    fail(
+        "render receipt names the exact repository skill set",
+        str(receipt_path),
+        "rerender with the current canonical repository skills",
+    )
+expected_overlays = sorted(
+    f".agents/skills/{name}/{relative}"
+    for name, paths in generated_skill_overlays.items()
+    for relative in paths
+)
+if skill_baseline.get("generatedOverlays") != expected_overlays:
+    fail(
+        "only declared local skill profiles may differ from canonical skills",
+        str(receipt_path),
+        "restore the exact generated-overlay inventory and rerender",
+    )
+for name in repository_skills:
+    skill_root = root / ".agents/skills" / name
+    if not (skill_root / "SKILL.md").is_file() or not (skill_root / "agents/openai.yaml").is_file():
+        fail(
+            "repository skill is complete",
+            name,
+            "restore the complete canonical skill folder and rerender",
+        )
+    observed = skill_tree_receipt(skill_root, generated_skill_overlays.get(name, ()))
+    if observed != recorded_skills[name]:
+        fail(
+            "repository skill matches its canonical render-time source",
+            name,
+            f"restore the canonical {name} tree; expected {recorded_skills[name]}, got {observed}",
+        )
+expected_links = {
+    name: f"../../.agents/skills/{name}" for name in repository_skills
+}
+if skill_baseline.get("claudeLinks") != expected_links:
+    fail(
+        "render receipt records every standard Claude skill link",
+        str(receipt_path),
+        "rerender the complete Claude link inventory",
+    )
+for name, expected_target in expected_links.items():
+    link = root / ".claude/skills" / name
+    if (
+        not link.is_symlink()
+        or os.readlink(link) != expected_target
+        or link.resolve() != (root / ".agents/skills" / name).resolve()
+    ):
+        fail(
+            "Claude skill surface links to the repository-owned canonical copy",
+            str(link),
+            f"replace it with a symlink to {expected_target}",
+        )
 
 receipt_fields = {"schemaVersion","status","invariant","target","captureLimitBytes","capturedBytes","truncated","excerpt","details","recovery","postcondition","limitations","nonClaims"}
 for bounded_path in (root / "docs").rglob("*.receipt.json"):

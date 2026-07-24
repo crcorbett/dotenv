@@ -15,7 +15,7 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "5813cdeb9a36bdb86ae2c0870bec64f64d7f12c91b19824050e1841421ac8d5c",
+  "projectionDigest": "149ed07d50625cd9288665acca73e52fdde5b10348361ea03ea1fb2a8ce3df93",
   "skills": [
     {
       "name": "data-visualisation",
@@ -25,7 +25,7 @@
     {
       "name": "docs-maintainer",
       "fileCount": 5,
-      "treeDigest": "54243f16fbf8ec4f8d84ed96b4f0d66104ad34dce37ee9e51f7a1c756e4f92eb"
+      "treeDigest": "bbec2bd2f581a7efec2a1b1ab243ccaa0579a95579400f03ed8f392cda6dd8a4"
     },
     {
       "name": "effect-client-wrapper",
@@ -54,8 +54,8 @@
     },
     {
       "name": "repo-structure",
-      "fileCount": 100,
-      "treeDigest": "a92769346c706a1a95a51d648b62dd1008dcca1a5e3cc1d83dcb32e906a9e528"
+      "fileCount": 97,
+      "treeDigest": "a3e8ae23f7f9a1669906eb9dd516070445e0eed1d7e348667849e9e95279c7d6"
     },
     {
       "name": "voice",

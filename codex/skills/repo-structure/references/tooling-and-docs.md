@@ -16,12 +16,18 @@ tooling; product-spec and exec-plan indexes; and a portable local
 docs-maintainer with its own repository owner/check profile. Validate
 links, commands, export paths, metadata, and stale paths—not only presence.
 
+The repository skill baseline copies complete canonical skill folders. A
+content-addressed render receipt binds each copied tree while excluding only the
+declared generated repository profiles. `.claude/skills/**` entries must be
+exact relative links to `.agents/skills/**`; copied mirrors fail validation.
+
 The governance validator checks unique semantic owners, lifecycle and
 retirement metadata, local links, critical-journey oracles, automation and
-feedback controls, compatibility provenance, config digests, lockfile phase,
-limitations, and non-claims. Receipts are bounded envelopes; detailed output is
-stored by path/digest rather than embedded without limit. Failed and
-inconclusive evidence is preserved outside default navigation with provenance.
+feedback controls, canonical skill-tree digests, Claude links, compatibility
+provenance, config digests, lockfile phase, limitations, and non-claims.
+Receipts are bounded envelopes; detailed output is stored by path/digest rather
+than embedded without limit. Failed and inconclusive evidence is preserved
+outside default navigation with provenance.
 
 Knip has development and production graphs. CI runs the same ordered gate after
 `bun install --frozen-lockfile`; the first generated lockfile is intentionally

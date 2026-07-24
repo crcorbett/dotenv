@@ -48,6 +48,7 @@ runbook receipt.
 Lifecycle states are `current`, `superseded`, and `archived`. A superseded or
 archived current-looking document requires a reason and successor/tombstone;
 historical proof stays outside default navigation. Repository-local skills are
-the portable source for this repository. No external skill path or mirrored
-copy owns local facts. Repository writes do not authorize deploy, provider,
-release, publication, or push operations.
+the portable source for this repository. `.claude/skills/**` contains only
+validated links to `.agents/skills/**`; it is not a competing copy. Repository
+writes do not authorize deploy, provider, release, publication, or push
+operations.

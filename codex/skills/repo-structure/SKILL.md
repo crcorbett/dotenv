@@ -58,9 +58,11 @@ python3 scripts/render_repository.py \
 ```
 
 The renderer stages root/app/docs/tooling assets, invokes the canonical package
-renderer for domain, RPC, and HTTP API packages, installs the repository skill
-baseline, validates, then atomically renames. It never templates lockfiles,
-generated route trees, output, caches, or dependency trees.
+renderer for domain, RPC, and HTTP API packages, copies every complete current
+repository-skill folder, adds only the declared repository-local profiles,
+creates `.claude/skills/**` links to `.agents/skills/**`, validates the copied
+trees against their canonical sources, then atomically renames. It never
+templates lockfiles, generated route trees, output, caches, or dependency trees.
 
 The render receipt records official sources, selected versions, compatibility
 decisions, config digests, limitations, and an explicitly absent lockfile. After
@@ -69,9 +71,11 @@ receipt to `bun.lock`; do not claim a bootstrapped fixture before that phase.
 
 Use `--skills-root /absolute/skill-collection` only when the sibling skills are
 installed outside the default collection. Generated repository-local skills
-must remain useful without that global collection after rendering. The output
-includes a standalone thin local docs-maintainer and repository profile rather
-than a dependency on the global installation.
+must remain useful without that global collection after rendering. Each copied
+skill is the complete canonical folder. The docs-maintainer and
+package-structure skills receive explicit generated repository profiles; those
+profiles are the only permitted tree differences. Claude compatibility
+surfaces are links, never independently maintained copies.
 
 ## Enforce the architecture
 
