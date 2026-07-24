@@ -15,7 +15,7 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "6e20f335f021ca5558c7c4d7253cd0f77733b342b0764cfc0d74dc8e336d4e19",
+  "projectionDigest": "5813cdeb9a36bdb86ae2c0870bec64f64d7f12c91b19824050e1841421ac8d5c",
   "skills": [
     {
       "name": "data-visualisation",
@@ -25,7 +25,7 @@
     {
       "name": "docs-maintainer",
       "fileCount": 5,
-      "treeDigest": "1f8d72d95a0f0cb7ca14bde977fdcb8a5d3933349b5c455e4fb1e62a2ee86883"
+      "treeDigest": "54243f16fbf8ec4f8d84ed96b4f0d66104ad34dce37ee9e51f7a1c756e4f92eb"
     },
     {
       "name": "effect-client-wrapper",
