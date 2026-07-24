@@ -3,7 +3,7 @@ name: docs-maintainer
 description: Audit and edit repository documentation so material code, configuration, API, infrastructure, CI, operational, skill, and SPEC changes update the correct semantic owners in the same implementation slice. Use for documentation maintenance, docs audits, stale or contradictory READMEs, documentation-impact assessment during implementation, and PRD writing/review/closeout. Preserve just-in-time context, distinguish skills from runbooks and durable docs from dated proof, and provide claim-matched verification. Do not use for public copywriting alone or to copy mutable provider state into repository docs.
 ---
 
-# Docs Maintainer
+# Documentation Maintainer
 
 Keep documentation aligned with repository behavior by updating the earliest
 durable semantic owner and only the pointers that must lead to it.
