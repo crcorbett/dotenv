@@ -13,6 +13,22 @@ export default {
         "src/lib/runtime.{client,server}.ts": ["exports"],
       },
     },
-    "packages/*": { entry: ["src/index.ts", "src/server.ts", "src/live.layer.ts"] },
+    "packages/domain": {
+      entry: ["src/schemas.ts", "src/errors.ts", "src/service.ts", "src/live.layer.ts"],
+    },
+    "packages/rpc": {
+      entry: ["src/group.ts", "src/service.ts", "src/server.ts", "src/live.layer.ts"],
+    },
+    "packages/http-api": {
+      entry: [
+        "src/api.ts",
+        "src/group.ts",
+        "src/server.ts",
+        "src/client/service.ts",
+        "src/client/browser.layer.ts",
+        "src/client/in-process.layer.ts",
+      ],
+    },
+    "packages/effect-start": { entry: ["src/loader.ts"] },
   },
 } satisfies KnipConfig;

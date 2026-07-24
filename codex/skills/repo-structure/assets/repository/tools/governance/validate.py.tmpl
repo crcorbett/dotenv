@@ -8,6 +8,7 @@ import json
 import os
 import re
 import stat
+import subprocess
 import sys
 from pathlib import Path
 
@@ -66,6 +67,25 @@ def skill_tree_receipt(skill_root: Path, excluded: tuple[str, ...]) -> dict[str,
 
 
 root = Path(sys.argv[1] if len(sys.argv) > 1 else ".").resolve(strict=True)
+profile_path = root / "docs/governance/harness-profile.json"
+profile_validator = root / "tools/governance/validate_audit_artifacts.py"
+profile_result = subprocess.run(
+    [
+        "python3",
+        str(profile_validator),
+        "--profile",
+        str(profile_path),
+    ],
+    text=True,
+    capture_output=True,
+    check=False,
+)
+if profile_result.returncode != 0:
+    fail(
+        "repository harness profile is structurally complete",
+        str(profile_path),
+        profile_result.stdout.strip() or profile_result.stderr.strip(),
+    )
 docs_map_path = root / "docs/documentation-map.json"
 try:
     docs_map = json.loads(docs_map_path.read_text())
@@ -107,8 +127,42 @@ journeys = json.loads(journeys_path.read_text()).get("journeys")
 if not isinstance(journeys, list) or not journeys:
     fail("critical journey inventory is non-empty", str(journeys_path), "add a consumer-visible journey")
 for journey in journeys:
-    if not journey.get("observableOutcome") or not journey.get("verification") or not journey.get("limitations"):
-        fail("critical journey has oracle, verification, and limitations", journey.get("id", "unknown"), "complete the journey record")
+    required_journey_fields = {
+        "id",
+        "actorOrConsumer",
+        "boundary",
+        "startingState",
+        "inputs",
+        "stepsOrProcedureOwner",
+        "expectedBehavior",
+        "expectedSideEffects",
+        "preservedInvariants",
+        "oracle",
+        "environment",
+        "authority",
+        "evidence",
+        "nonClaims",
+    }
+    if not isinstance(journey, dict) or set(journey) != required_journey_fields:
+        fail(
+            "critical journey uses the fixed field contract",
+            journey.get("id", "unknown") if isinstance(journey, dict) else "unknown",
+            "complete the actor, boundary, state, behavior, oracle, authority, evidence, and non-claim fields",
+        )
+    for field in (
+        "inputs",
+        "expectedBehavior",
+        "expectedSideEffects",
+        "preservedInvariants",
+        "evidence",
+        "nonClaims",
+    ):
+        if not isinstance(journey[field], list) or not journey[field]:
+            fail(
+                "critical journey list fields are explicit",
+                f"{journey['id']}:{field}",
+                "add at least one concrete value",
+            )
 
 receipt_path = root / "repo-structure.render.json"
 receipt = json.loads(receipt_path.read_text())

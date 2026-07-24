@@ -43,6 +43,7 @@
     "format": "oxfmt .",
     "lint": "oxlint .",
     "test:lint-rules": "bun test tools/oxlint/policy.test.ts",
+    "validate:harness-profile": "python3 tools/governance/validate_audit_artifacts.py --profile docs/governance/harness-profile.json",
     "validate:governance": "python3 tools/governance/validate.py .",
     "check-types": "tsc --noEmit -p tsconfig.infrastructure.json && turbo run check-types",
     "test": "turbo run test",

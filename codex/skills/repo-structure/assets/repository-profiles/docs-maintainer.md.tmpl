@@ -11,6 +11,8 @@
 - Critical journeys: `docs/critical-journeys/journeys.json`
 - Proof packets: `docs/proof/`
 - Authority, automation, controls, epochs, and effectiveness: `docs/governance/`
+- Repository harness profile: `docs/governance/harness-profile.json`
+- Structured repository audits: `docs/audits/`
 - Evidence, failed work, and archive route: `docs/evidence/`
 
 ## README and generated-reference rules
@@ -29,6 +31,11 @@ Run the applicable focused check first, then the relevant aggregate subset:
 
 ```bash
 python3 tools/governance/validate.py .
+python3 tools/governance/validate_audit_artifacts.py \
+  --scope docs/audits/<audit>/audit-scope.json \
+  --findings docs/audits/<audit>/audit-findings.json \
+  --crosswalk docs/audits/<audit>/accepted-findings.json \
+  --profile docs/governance/harness-profile.json
 bun run format:check
 bun run lint
 bun run test:lint-rules
@@ -38,8 +45,9 @@ bun run build
 bun run verification
 ```
 
-The governance validator owns docs registry, links, lifecycle, controls,
-journeys, proof shape, bounded receipts, and local skill/reference integrity.
+The governance validators own the docs registry, harness profile, audit
+artifacts, links, lifecycle, controls, journeys, proof shape, bounded receipts,
+and local skill/reference integrity.
 Product/runtime/provider claims additionally require their owning journey or
 runbook receipt.
 

@@ -74,6 +74,32 @@ def copy_assets(stage: Path, replacements: dict[str, str]) -> None:
         output.write_text(text)
 
 
+def copy_harness_contract_assets(stage: Path) -> None:
+    shared_assets = stage / ".agents/skills/docs-maintainer/assets/harness"
+    harness_schemas = stage / "tools/governance/schemas/harness"
+    harness_schemas.mkdir(parents=True, exist_ok=True)
+    for source in sorted(shared_assets.glob("*.schema.json")):
+        shutil.copy2(source, harness_schemas / source.name)
+
+    audit_assets = SKILL / "assets/audit"
+    audit_schemas = stage / "tools/governance/schemas/audit"
+    audit_templates = stage / "docs/audits/templates"
+    audit_schemas.mkdir(parents=True, exist_ok=True)
+    audit_templates.mkdir(parents=True, exist_ok=True)
+    for source in sorted(audit_assets.glob("*.schema.json")):
+        shutil.copy2(source, audit_schemas / source.name)
+    for source in sorted(audit_assets.glob("*.template.json")):
+        shutil.copy2(source, audit_templates / source.name)
+    shutil.copy2(
+        SKILL / "scripts/validate_audit_artifacts.py",
+        stage / "tools/governance/validate_audit_artifacts.py",
+    )
+    shutil.copy2(
+        SKILL / "scripts/finalize_repository_receipt.py",
+        stage / "tools/governance/finalize_repository_receipt.py",
+    )
+
+
 def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
@@ -169,6 +195,7 @@ def main() -> None:
         copy_assets(stage, replacements)
         copy_complete_skill_baseline(stage, skills_root)
         render_repository_skill_profiles(stage, replacements)
+        copy_harness_contract_assets(stage)
         create_claude_skill_links(stage)
         validate_canonical_skill_copy(stage, skills_root)
         package_renderer = load_package_renderer(package_skill)
@@ -206,6 +233,9 @@ def main() -> None:
                     "package.json", "tsconfig.base.json", "tsconfig.infrastructure.json", "turbo.json",
                     "oxlint.config.ts", "oxfmt.config.ts", "vitest.config.ts",
                     "knip.ts", "alchemy.run.ts",
+                    "docs/governance/harness-profile.json",
+                    "tools/governance/validate_audit_artifacts.py",
+                    "tools/governance/finalize_repository_receipt.py",
                 )
             },
             "lockfile": {

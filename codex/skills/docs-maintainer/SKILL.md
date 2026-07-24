@@ -40,6 +40,32 @@ config, and Schemas for desired state; durable docs for explanation and routing;
 dated evidence for observations; active SPEC/tasks for current intent and
 execution. Link across layers instead of copying claims between them.
 
+For a repository-wide documentation audit, substantial PRD, or cross-cutting
+harness change, read
+[repository-harness-contract.md](references/repository-harness-contract.md).
+It routes to the complete local method and requires no external source lookup.
+Load the applicable structured modules directly:
+
+- [contract map](references/harness/contract-map.md) for mode and lifecycle;
+- [invariant register](references/harness/invariant-register.md) for stable IDs;
+- [context and ownership](references/harness/context-and-ownership.md) for truth
+  layers, phased retrieval, and publication boundaries;
+- [proof and evaluation](references/harness/proof-and-evaluation.md) for
+  journeys, delivery, receipts, terminal states, and proportional evaluation;
+- [operations and authority](references/harness/operations-and-authority.md)
+  when runbooks, providers, controls, releases, or automation are in scope; and
+- [repository variation](references/harness/repository-variation.md) when
+  creating or changing the local profile.
+
+Use the Schemas and templates under `assets/harness/` for repository profiles,
+critical journeys, bounded receipts, authority envelopes, and feedback or
+automation controls. Do not replace those fixed field contracts with free-form
+prose.
+For an ordinary localized documentation change, do not load that broader
+contract unless an ownership, delivery, dependency, or proof question requires
+it. This skill owns the documentation track; use the sibling `repo-structure`
+skill for a complete repository audit.
+
 ## Load context in phases
 
 Use just enough context to decide and then prove the change:
@@ -55,6 +81,12 @@ Use just enough context to decide and then prove the change:
 Do not preload the whole repository for an ordinary localized change. A
 repository-wide documentation audit or PRD review may require a full
 `docs/**` and `README*` accounting under its owning skill.
+
+For a repository-wide audit, return documentation findings in the stable
+finding format owned by the repository-audit procedure: consequence,
+evidence, semantic owner, root correction, duplicated guidance to retire,
+affected surfaces, proof, authority, limitations, and non-claims. Separate
+important corrections from optional improvements.
 
 ## Build the impact ledger
 

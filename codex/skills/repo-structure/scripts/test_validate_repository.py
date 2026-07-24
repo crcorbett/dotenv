@@ -179,6 +179,19 @@ with tempfile.TemporaryDirectory(prefix="repo-structure-cases-") as raw:
     path.write_text(path.read_text().replace("## Runbook applicability", "## Operations"))
     cases["missing-runbook-applicability"] = run_validator(missing_runbook_applicability).returncode != 0
 
+    invalid_production_knip = temp / "invalid-production-knip"
+    shutil.copytree(golden, invalid_production_knip, symlinks=True)
+    path = invalid_production_knip / "knip.production.ts"
+    path.write_text(
+        path.read_text().replace(
+            '"packages/domain": {\n'
+            '      entry: ["src/schemas.ts", "src/errors.ts", "src/service.ts", "src/live.layer.ts"],\n'
+            "    },",
+            '"packages/*": { entry: ["src/index.ts"] },',
+        )
+    )
+    cases["invalid-production-knip"] = run_validator(invalid_production_knip).returncode != 0
+
     leaf_owned_boundary_work = temp / "leaf-owned-boundary-work"
     shutil.copytree(golden, leaf_owned_boundary_work)
     path = leaf_owned_boundary_work / "docs/architecture/frontend-composition.md"

@@ -16,7 +16,15 @@ updateable. Resolve current versions first; render only from a recorded snapshot
    vendored trees explicitly.
 2. Inspect worktree state. For an existing repository, patch only authorized
    paths and preserve unrelated work.
-3. Read [repository contract](references/repository-contract.md),
+3. For an existing-repository audit, read the
+   [repository audit router](references/repository-audit.md), then load its
+   [workflow](references/audit/workflow.md),
+   [corpus and journeys](references/audit/corpus-and-journeys.md),
+   [lenses](references/audit/lenses.md),
+   [findings and acceptance](references/audit/findings-and-acceptance.md), and
+   [variation and stopping](references/audit/variation-and-stopping.md).
+   Then read the
+   [repository contract](references/repository-contract.md),
    [TanStack and Effect architecture](references/tanstack-effect.md), and
    [tooling and docs](references/tooling-and-docs.md).
 4. Load the canonical sibling
@@ -25,6 +33,30 @@ updateable. Resolve current versions first; render only from a recorded snapshot
    relative to this installed skill collection, or pass the skill collection
    explicitly to the renderer. Stop before rendering if either is unavailable;
    do not invent package/document contracts or assume a user's home directory.
+
+## Audit an existing repository
+
+Default to report-first. Define the target revision, claimed jobs, accepted
+outcomes, proof boundaries, authority, exclusions, and stop conditions. Account
+for the repository corpus, then follow a small set of representative jobs from
+request through ownership, implementation, proof, delivery, and acceptance.
+Use prior collaboration evidence when available and authorized; treat it as
+trajectory evidence rather than repository policy.
+
+For a whole-repository audit, create the structured scope and finding artifacts
+from `assets/audit/`; do not use free-form prose as the sole audit record.
+Validate them with `scripts/validate_audit_artifacts.py`. Return a
+consequence-ordered Markdown view with stable IDs, separate important
+corrections from optional improvements, identify the earliest owning
+correction, and name duplicated machinery to retire. Stop for acceptance before
+implementation unless the original request authorizes both. Record accepted
+finding IDs in the crosswalk, hand them to `prd-writer`, then use `prd-review`
+and `prd-implementer`.
+
+For most repositories, stop after the structural and trajectory audit,
+accepted important corrections, normal repository checks, and one fresh
+independent review. Do not create a comparative harness evaluation unless the
+claim is that a particular intervention changes future worker behavior.
 
 ## Resolve or select versions
 
@@ -63,6 +95,19 @@ repository-skill folder, adds only the declared repository-local profiles,
 creates `.claude/skills/**` links to `.agents/skills/**`, validates the copied
 trees against their canonical sources, then atomically renames. It never
 templates lockfiles, generated route trees, output, caches, or dependency trees.
+
+Every scaffold includes the minimum repository-owned harness:
+
+- fixed invariant and audit guidance inside the copied local skills;
+- a repository harness profile as the sole local variation surface;
+- one docs router and documentation owner map;
+- structured audit scope, finding, and accepted-finding templates plus schemas;
+- critical journeys, proof and bounded-receipt contracts;
+- authority, feedback/control, automation, epoch, effectiveness, evidence, and
+  runbook owners;
+- deterministic governance and audit validation; and
+- an active bootstrap-harness task that qualifies the rendered defaults before
+  they become current repository truth.
 
 The render receipt records official sources, selected versions, compatibility
 decisions, config digests, limitations, and an explicitly absent lockfile. After

@@ -18,6 +18,13 @@ docs own durable repository truth, and the active SPEC/tasks own the current
 change. Pull current and affected owners just in time; link to history, raw
 proof, and provider truth instead of copying them into the active context.
 
+For substantial repository, operational, automation, migration, or harness
+work, read the sibling
+[`repository-harness-contract`](../docs-maintainer/references/repository-harness-contract.md)
+once during grounding, including its contract map and invariant register. Apply
+the stable invariant IDs through the owning task surfaces rather than copying
+the references into the SPEC, code, or final report.
+
 ## Delegated Slice Prompt Contract
 
 Keep one primary trajectory accountable for integration, proof, delivery, and
@@ -40,16 +47,20 @@ and task closure.
 For each task:
 
 1. Re-state its owning paths, dependencies, acceptance criteria, and verification.
-2. For a material slice, load the sibling
+2. When work derives from an audit, confirm the task's accepted finding IDs.
+   Validate the structured crosswalk when the repository provides its audit
+   validator. Do not implement rejected, deferred, or optional findings without
+   explicit acceptance.
+3. For a material slice, load the sibling
    [`docs-maintainer`](../docs-maintainer/SKILL.md) and its local profile when
    present; establish the slice's documentation-impact rows.
-3. Implement the smallest complete vertical slice.
-4. Update the SPEC, tasks, diagrams, owning docs, necessary pointers, READMEs,
+4. Implement the smallest complete vertical slice.
+5. Update the SPEC, tasks, diagrams, owning docs, necessary pointers, READMEs,
    lint/configuration, skills, and operational artifacts immediately when
    implementation evidence changes them.
-5. Audit the diff for architecture, helper sprawl, boundary provenance, React composition, and enforcement.
-6. Run the narrow proof first and broaden according to blast radius.
-7. Record evidence and mark completion only when every required surface and
+6. Audit the diff for architecture, helper sprawl, boundary provenance, React composition, and enforcement.
+7. Run the narrow proof first and broaden according to blast radius.
+8. Record evidence and mark completion only when every required surface and
    documentation-impact row passes.
 
 Do not preserve a fixed number of passes, subagents, files, or commands as a
@@ -119,3 +130,9 @@ active SPEC, tasks, execution plan, lifecycle state, successor/tombstone and
 archive pointers, proof packets, limitations, and non-claims against the
 implemented repository. Run the exact local documentation and lifecycle checks
 and mark completion only after current owners and planning artifacts agree.
+
+For ordinary repository improvements, finish after the accepted important
+corrections, normal repository checks, applicable real journeys, and one fresh
+independent review. Preserve optional work as optional. Do not extend execution
+into a comparative harness campaign unless that distinct claim and authority
+were approved.

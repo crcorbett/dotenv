@@ -73,7 +73,22 @@ required = [
     "docs/critical-journeys/README.md", "docs/critical-journeys/journeys.json",
     "docs/proof/README.md", "docs/proof/proof-packet.template.json", "docs/governance/authority.md",
     "docs/governance/automation-register.json", "docs/governance/feedback-controls.json",
+    "docs/governance/harness-profile.json", "docs/audits/README.md",
+    "docs/audits/templates/audit-scope.template.json",
+    "docs/audits/templates/audit-findings.template.json",
+    "docs/audits/templates/accepted-findings.template.json",
+    "docs/exec-plans/active/bootstrap-harness.md",
     "docs/evidence/README.md", "tools/governance/validate.py",
+    "tools/governance/validate_audit_artifacts.py",
+    "tools/governance/finalize_repository_receipt.py",
+    "tools/governance/schemas/harness/repository-harness-profile.schema.json",
+    "tools/governance/schemas/harness/authority-envelope.schema.json",
+    "tools/governance/schemas/harness/bounded-receipt.schema.json",
+    "tools/governance/schemas/harness/control-record.schema.json",
+    "tools/governance/schemas/harness/critical-journey.schema.json",
+    "tools/governance/schemas/audit/audit-scope.schema.json",
+    "tools/governance/schemas/audit/audit-findings.schema.json",
+    "tools/governance/schemas/audit/accepted-findings.schema.json",
     "tools/governance/schemas/bounded-receipt.schema.json",
     "tools/governance/schemas/proof-packet.schema.json",
     "tools/governance/schemas/task-plan.schema.json",
@@ -150,6 +165,29 @@ for protected_tree in ("**/.agents/skills/**", "**/.claude/skills/**"):
         raise SystemExit(
             f"formatter must preserve canonical repository skill trees: {protected_tree}"
         )
+production_knip = (root / "knip.production.ts").read_text()
+if '"packages/*"' in production_knip or "src/index.ts" in production_knip:
+    raise SystemExit("production Knip entries must name real package-owned entrypoints")
+for relative in (
+    "packages/domain/src/schemas.ts",
+    "packages/domain/src/errors.ts",
+    "packages/domain/src/service.ts",
+    "packages/domain/src/live.layer.ts",
+    "packages/rpc/src/group.ts",
+    "packages/rpc/src/service.ts",
+    "packages/rpc/src/server.ts",
+    "packages/rpc/src/live.layer.ts",
+    "packages/http-api/src/api.ts",
+    "packages/http-api/src/group.ts",
+    "packages/http-api/src/server.ts",
+    "packages/http-api/src/client/service.ts",
+    "packages/http-api/src/client/browser.layer.ts",
+    "packages/http-api/src/client/in-process.layer.ts",
+    "packages/effect-start/src/loader.ts",
+):
+    source_entry = relative.split("/", 2)[2]
+    if not (root / relative).is_file() or source_entry not in production_knip:
+        raise SystemExit(f"production Knip entry is missing or unowned: {relative}")
 skill_baseline = receipt.get("skillBaseline")
 if not isinstance(skill_baseline, dict):
     raise SystemExit("render receipt missing canonical skill baseline")

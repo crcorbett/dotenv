@@ -15,7 +15,7 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "149ed07d50625cd9288665acca73e52fdde5b10348361ea03ea1fb2a8ce3df93",
+  "projectionDigest": "e9ad81eb514079ffad24c356e281e8a32d8abb630d46f464a9fdb8a1bbc406a6",
   "skills": [
     {
       "name": "data-visualisation",
@@ -24,8 +24,8 @@
     },
     {
       "name": "docs-maintainer",
-      "fileCount": 5,
-      "treeDigest": "bbec2bd2f581a7efec2a1b1ab243ccaa0579a95579400f03ed8f392cda6dd8a4"
+      "fileCount": 18,
+      "treeDigest": "bf69b0b097833ecd4cf27a848991998c67ee8564485b7e697b278f7293bdb72e"
     },
     {
       "name": "effect-client-wrapper",
@@ -40,22 +40,22 @@
     {
       "name": "prd-implementer",
       "fileCount": 2,
-      "treeDigest": "d26bd470d5e72e617f9d1cdd81dbcae66b802b1a4c418e662face96b8ee59426"
+      "treeDigest": "2a665bdef90bd3f016a152dd10efbd9e21f1c359a4afac86d1c77fdbe68538e2"
     },
     {
       "name": "prd-review",
       "fileCount": 2,
-      "treeDigest": "05058ddbf71f4ad0aa616d8bdd67ad343a179c6aa197f4fa4686ff7b3704272b"
+      "treeDigest": "718074c0f02e3dfe362256d73d1401f1d80f389bc4c597cf9fbafe369b6afb8e"
     },
     {
       "name": "prd-writer",
       "fileCount": 2,
-      "treeDigest": "0cd129dad5b1fd781e1211a211c7dff449e2f2db54ed93bc82623e25583d3fd1"
+      "treeDigest": "28402662afb630afd4ba52e319228c40f4c360286d30522022f07925c2591752"
     },
     {
       "name": "repo-structure",
-      "fileCount": 97,
-      "treeDigest": "a3e8ae23f7f9a1669906eb9dd516070445e0eed1d7e348667849e9e95279c7d6"
+      "fileCount": 114,
+      "treeDigest": "eaa35df2e828849acaecae19cf539fc0a6469ece638f0117a92e0f500d45d06b"
     },
     {
       "name": "voice",

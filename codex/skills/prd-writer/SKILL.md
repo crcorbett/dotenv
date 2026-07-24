@@ -19,6 +19,21 @@ state; repository docs own durable repository truth; the active SPEC/tasks own
 only the current change. Link between layers instead of copying provider state,
 architecture, procedures, proof, or task history into a second owner.
 
+For a substantial repository, operational, automation, migration, or harness
+SPEC, read the sibling
+[`repository-harness-contract`](../docs-maintainer/references/repository-harness-contract.md).
+Load its
+[`contract map`](../docs-maintainer/references/harness/contract-map.md) and
+[`invariant register`](../docs-maintainer/references/harness/invariant-register.md).
+Apply the relevant stable invariant IDs without copying the references into the
+SPEC.
+
+When the SPEC starts from an audit, obtain the accepted finding register before
+writing. Require the structured accepted-finding crosswalk and validate it with
+the repository's audit validator when available. Preserve stable finding IDs.
+Include accepted findings only; keep rejected, deferred, and optional findings
+out of implementation scope unless the user explicitly accepts them later.
+
 ## Write the contract
 
 Define goals, non-goals, current state, target ownership, call graphs, data and error contracts, security, accessibility, operations, rollout, rollback, and independently observable acceptance criteria as applicable. Replace phrases such as "follow existing patterns", "handle errors", or "add tests" with named owners, failure cases, files, and proof.
@@ -104,6 +119,11 @@ For every required change, name the exact path or narrow path set, dependency or
 
 - Edit the SPEC and its canonical sibling task artifact in place as evidence changes the design.
 - Keep tasks atomic, ordered, end-to-end, and traceable to SPEC requirements.
+- Map every accepted audit finding to at least one owning requirement and task;
+  record rejected, deferred, or optional findings as out of scope rather than
+  silently dropping or implementing them.
+- Carry the finding's invariant IDs, complete fixed impact-surface decisions,
+  verification, journeys, and proof into its owning requirements and tasks.
 - Put the relevant Effect, wrapper, helper-sprawl, React, documentation, lint, and skill acceptance rules inside every affected task rather than relying on one global reminder.
 - Carry the applicable documentation-impact rows inside each owning task; do
   not delegate them to a separate end-of-project documentation task.
@@ -115,5 +135,10 @@ For every required change, name the exact path or narrow path set, dependency or
   alone are not completion proof.
 - Remove or merge stale, duplicated, contradictory, and superseded tasks.
 - Record unresolved product decisions as explicit blockers and decision tasks.
+
+For ordinary repository improvements, require normal repository checks,
+applicable real journeys, and one fresh independent review. Require a
+fixed-worker comparative evaluation only when the SPEC makes a general claim
+about the behavioral effect of a harness intervention.
 
 Finish by re-reading the SPEC and tasks together, checking links and diagrams, validating structured task files, and reporting the exact artifacts changed and remaining decisions.

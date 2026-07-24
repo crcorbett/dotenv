@@ -40,7 +40,12 @@ Use three phases so exhaustive accounting does not preload unrelated context:
 1. **Grounding:** read the SPEC/tasks, root instructions, owning architecture,
    directly affected `README*`, code, configuration, and commands. Load the
    sibling [`docs-maintainer`](../docs-maintainer/SKILL.md) and its local
-   repository profile when present.
+   repository profile when present. For substantial repository, operational,
+   automation, migration, or harness work, also read
+   [`repository-harness-contract`](../docs-maintainer/references/repository-harness-contract.md).
+   Load its contract map and invariant register directly. When the SPEC derives
+   from an audit, locate and validate the structured accepted-finding crosswalk
+   and preserve its stable finding and invariant IDs.
 2. **Investigation:** expand only for unresolved local decisions and upstream
    library questions; delegate only under the evidence rule above.
 3. **Landing:** build an inventory with `rg --files` and read, rather than merely
@@ -97,6 +102,11 @@ Create an evidence map from each material SPEC requirement to supporting documen
 Remove vague instructions such as "handle errors," "add tests," or "follow existing patterns." Replace them with named patterns, failure cases, owners, and observable outcomes.
 
 ## Review the harness contract
+
+Use the complete local repository-harness reference for material work. In
+addition to the checks below, verify whole-job ownership, coherent repository
+precedent, completed migrations, tool operability, dependency and lifetime
+ownership, artifact delivery, and proportional carrying cost where applicable.
 
 For material work, edit the SPEC/tasks to cover every applicable lens:
 
@@ -225,14 +235,23 @@ Do not invent command names. If the repository lacks a needed rule, state the ru
 ## Complete and report
 
 1. Confirm that every evidence-backed finding and downstream-artifact impact has been applied to the SPEC and associated tasks or recorded as an explicit unresolved blocker.
-2. Re-read the SPEC and task artifacts together to ensure their phases, dependencies, acceptance criteria, and verification commands agree.
-3. Verify that docs, READMEs, lint rules, skills, and adjacent artifacts are each marked `Change required` or `N/A` with evidence.
-4. Remove duplicated, contradictory, stale, or non-actionable prose and tasks.
-5. Re-read the full diff against the original intent and the evidence map.
-6. Run available documentation formatting or lint checks plus `git diff --check`; otherwise inspect headings, links, code fences, and internal consistency manually.
-7. Confirm the docs-maintainer impact ledger, semantic owners, lifecycle
+2. For an audit-derived SPEC, confirm every accepted finding ID maps to an
+   owning requirement and task, while rejected, deferred, and optional findings
+   remain outside implementation scope unless explicitly accepted.
+   Confirm its complete fixed impact-surface map, verification, journeys, and
+   proof survived the handoff rather than being reduced to a summary.
+3. Re-read the SPEC and task artifacts together to ensure their phases, dependencies, acceptance criteria, and verification commands agree.
+4. Verify that docs, READMEs, lint rules, skills, and adjacent artifacts are each marked `Change required` or `N/A` with evidence.
+5. Remove duplicated, contradictory, stale, or non-actionable prose and tasks.
+6. Re-read the full diff against the original intent and the evidence map.
+7. Run available documentation formatting or lint checks plus `git diff --check`; otherwise inspect headings, links, code fences, and internal consistency manually.
+8. Confirm the docs-maintainer impact ledger, semantic owners, lifecycle
    transitions, exact checks, proof, and non-claims agree with the landed
    SPEC/tasks.
+9. For ordinary repository work, stop after accepted corrections, normal
+   repository checks, applicable journeys, and one fresh independent review.
+   Do not require comparative evaluation unless the SPEC makes a general
+   harness-effect claim.
 
 Finish with a concise report containing:
 

@@ -13,8 +13,12 @@ as a template.
 Documentation must include root/app/package READMEs; architecture pages for
 package ownership, Effect services, frontend composition, testing/quality, and
 tooling; product-spec and exec-plan indexes; and a portable local
-docs-maintainer with its own repository owner/check profile. Validate
-links, commands, export paths, metadata, and stale paths—not only presence.
+docs-maintainer with its own repository owner/check profile. Validate links,
+commands, export paths, metadata, and stale paths—not only presence. The
+scaffold also includes one repository harness profile, structured audit
+scope/findings/acceptance templates, fixed schemas, a deterministic validator,
+and an active bootstrap plan. The profile is the only repository-specific
+variation surface; audit reports are views over structured records.
 
 The repository skill baseline copies complete canonical skill folders. A
 content-addressed render receipt binds each copied tree while excluding only the
@@ -24,7 +28,10 @@ exact relative links to `.agents/skills/**`; copied mirrors fail validation.
 The governance validator checks unique semantic owners, lifecycle and
 retirement metadata, local links, critical-journey oracles, automation and
 feedback controls, canonical skill-tree digests, Claude links, compatibility
-provenance, config digests, lockfile phase, limitations, and non-claims.
+provenance, config digests, lockfile phase, limitations, and non-claims. It also
+validates the harness profile. The audit validator enforces target identity,
+corpus scope, stable invariant/finding IDs, all impact surfaces, decision
+states, and accepted-finding crosswalk integrity.
 Receipts are bounded envelopes; detailed output is stored by path/digest rather
 than embedded without limit. Failed and inconclusive evidence is preserved
 outside default navigation with provenance.
