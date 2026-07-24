@@ -5,9 +5,17 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 import re
 import subprocess
 from pathlib import Path
+
+from skill_trees import (
+    GENERATED_SKILL_OVERLAYS,
+    REPOSITORY_SKILLS,
+    compare_skill_tree,
+    tree_receipt,
+)
 
 
 SKILL = Path(__file__).resolve().parent.parent
@@ -16,12 +24,20 @@ PERSONAL_ROOT = "/" + "Users" + "/"
 parser = argparse.ArgumentParser()
 parser.add_argument("repository")
 parser.add_argument("--package-skill-root")
+parser.add_argument("--skills-root")
 args = parser.parse_args()
 
 root = Path(args.repository).resolve(strict=True)
+skills_root = (
+    Path(args.skills_root).resolve(strict=True)
+    if args.skills_root
+    else None
+)
 package_skill = (
     Path(args.package_skill_root).resolve(strict=True)
     if args.package_skill_root
+    else (skills_root / "package-structure")
+    if skills_root
     else (SKILL.parent / "package-structure").resolve(strict=True)
 )
 package_validator = package_skill / "scripts/validate_package.py"
@@ -35,7 +51,14 @@ for path in root.rglob("*"):
     text = path.read_text(errors="ignore")
     if PERSONAL_ROOT in text:
         raise SystemExit(f"personal absolute path in {path.relative_to(root)}")
-    if re.search(r"__[A-Z][A-Z0-9_]*__|\*\*[A-Z][A-Z0-9_]*\*\*", text):
+    relative = path.relative_to(root)
+    is_repository_skill = (
+        len(relative.parts) >= 3
+        and relative.parts[:2] == (".agents", "skills")
+    )
+    if not is_repository_skill and re.search(
+        r"__[A-Z][A-Z0-9_]*__|\*\*[A-Z][A-Z0-9_]*\*\*", text
+    ):
         raise SystemExit(f"unresolved template token in {path.relative_to(root)}")
 required = [
     "AGENTS.md", "README.md", "ARCHITECTURE.md", "package.json", "tsconfig.base.json", "tsconfig.infrastructure.json", "turbo.json",
@@ -61,10 +84,12 @@ required = [
     ".agents/skills/docs-maintainer/SKILL.md",
     ".agents/skills/docs-maintainer/agents/openai.yaml",
     ".agents/skills/docs-maintainer/references/repository-profile.md",
+    ".agents/skills/package-structure/references/repository-profile.md",
 ]
 missing = [path for path in required if not (root / path).is_file()]
 if missing:
     raise SystemExit(f"missing repository files: {missing}")
+receipt = json.loads((root / "repo-structure.render.json").read_text())
 manifest = json.loads((root / "package.json").read_text())
 effect = manifest["workspaces"]["catalogs"]["effect"]
 if len(set(effect.values())) != 1:
@@ -73,10 +98,68 @@ for workflow in (root / ".github/workflows").glob("*.yml"):
     for line in workflow.read_text().splitlines():
         if "uses:" in line and not re.search(r"@[0-9a-f]{40}(?:\s|#|$)", line):
             raise SystemExit(f"mutable action in {workflow.relative_to(root)}: {line.strip()}")
-for skill in ("docs-maintainer", "package-structure", "prd-writer", "prd-review", "prd-implementer", "effect-client-wrapper"):
+formatter_config = (root / "oxfmt.config.ts").read_text()
+for protected_tree in ("**/.agents/skills/**", "**/.claude/skills/**"):
+    if protected_tree not in formatter_config:
+        raise SystemExit(
+            f"formatter must preserve canonical repository skill trees: {protected_tree}"
+        )
+skill_baseline = receipt.get("skillBaseline")
+if not isinstance(skill_baseline, dict):
+    raise SystemExit("render receipt missing canonical skill baseline")
+recorded_skills = skill_baseline.get("skills")
+if not isinstance(recorded_skills, dict) or set(recorded_skills) != set(REPOSITORY_SKILLS):
+    raise SystemExit("render receipt skill baseline does not name the exact repository skill set")
+expected_overlays = sorted(
+    f".agents/skills/{name}/{relative}"
+    for name, paths in GENERATED_SKILL_OVERLAYS.items()
+    for relative in paths
+)
+if skill_baseline.get("generatedOverlays") != expected_overlays:
+    raise SystemExit("render receipt generated skill overlays are incomplete or unexpected")
+for overlay in expected_overlays:
+    overlay_path = root / overlay
+    if not overlay_path.is_file():
+        raise SystemExit(f"missing generated local skill profile: {overlay}")
+    if re.search(
+        r"__[A-Z][A-Z0-9_]*__|\*\*[A-Z][A-Z0-9_]*\*\*",
+        overlay_path.read_text(),
+    ):
+        raise SystemExit(f"unresolved template token in generated local skill profile: {overlay}")
+for skill in REPOSITORY_SKILLS:
     skill_root = root / ".agents/skills" / skill
     if not (skill_root / "SKILL.md").is_file() or not (skill_root / "agents/openai.yaml").is_file():
         raise SystemExit(f"incomplete local skill: {skill}")
+    observed = tree_receipt(
+        skill_root,
+        GENERATED_SKILL_OVERLAYS.get(skill, ()),
+    )
+    if observed != recorded_skills[skill]:
+        raise SystemExit(
+            f"rendered skill tree drift for {skill}: "
+            f"expected {recorded_skills[skill]}, got {observed}"
+        )
+    if skills_root:
+        try:
+            compare_skill_tree(
+                skills_root / skill,
+                skill_root,
+                GENERATED_SKILL_OVERLAYS.get(skill, ()),
+            )
+        except ValueError as error:
+            raise SystemExit(str(error)) from error
+recorded_links = skill_baseline.get("claudeLinks")
+expected_links = {
+    name: f"../../.agents/skills/{name}" for name in REPOSITORY_SKILLS
+}
+if recorded_links != expected_links:
+    raise SystemExit("render receipt Claude skill links are incomplete or unexpected")
+for skill, expected_target in expected_links.items():
+    link = root / ".claude/skills" / skill
+    if not link.is_symlink() or os.readlink(link) != expected_target:
+        raise SystemExit(f"invalid Claude skill link: {link.relative_to(root)}")
+    if link.resolve() != (root / ".agents/skills" / skill).resolve():
+        raise SystemExit(f"Claude skill link resolves to the wrong skill: {skill}")
 skill_link_pattern = re.compile(r"\[[^\]]+\]\(([^)]+)\)")
 for markdown in (root / ".agents/skills").rglob("*.md"):
     for raw in skill_link_pattern.findall(markdown.read_text()):
@@ -99,7 +182,6 @@ if "Documentation router:" in package_profile or "Runbook owner:" in package_pro
 for package in ("domain", "rpc", "http-api"):
     subprocess.run(["python3", str(package_validator), str(root / "packages" / package)], check=True)
 subprocess.run(["python3", str(root / "tools/governance/validate.py"), str(root)], check=True)
-receipt = json.loads((root / "repo-structure.render.json").read_text())
 if receipt.get("phase") not in {"rendered", "bootstrapped"}:
     raise SystemExit("render receipt needs rendered or bootstrapped phase")
 if "alchemy" not in receipt.get("selectedVersions", {}):

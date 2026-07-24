@@ -14,6 +14,14 @@ import subprocess
 import tempfile
 from pathlib import Path
 
+from skill_trees import (
+    GENERATED_SKILL_OVERLAYS,
+    IGNORED_NAMES,
+    REPOSITORY_SKILLS,
+    baseline_receipt,
+    compare_skill_tree,
+)
+
 
 SKILL = Path(__file__).resolve().parent.parent
 SCOPE = re.compile(r"^@[a-z0-9][a-z0-9._-]*$")
@@ -70,16 +78,49 @@ def sha256(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def install_skill_baseline(stage: Path, skills_root: Path) -> None:
+def copy_complete_skill_baseline(stage: Path, skills_root: Path) -> None:
     destination = stage / ".agents/skills"
-    for name in ("prd-writer", "prd-review", "prd-implementer", "effect-client-wrapper"):
+    for name in REPOSITORY_SKILLS:
         source = resolve_skill(skills_root, name)
         target = destination / name
-        target.mkdir(parents=True, exist_ok=True)
-        shutil.copy2(source / "SKILL.md", target / "SKILL.md")
-        if (source / "agents/openai.yaml").is_file():
-            (target / "agents").mkdir(exist_ok=True)
-            shutil.copy2(source / "agents/openai.yaml", target / "agents/openai.yaml")
+        shutil.copytree(
+            source,
+            target,
+            symlinks=True,
+            ignore=shutil.ignore_patterns(*IGNORED_NAMES, "*.pyc"),
+        )
+
+
+def render_repository_skill_profiles(
+    stage: Path, replacements: dict[str, str]
+) -> None:
+    profile_root = SKILL / "assets/repository-profiles"
+    for name, paths in GENERATED_SKILL_OVERLAYS.items():
+        if paths != ("references/repository-profile.md",):
+            raise ValueError(f"unsupported generated skill overlay for {name}: {paths}")
+        source = profile_root / f"{name}.md.tmpl"
+        text = source.read_text()
+        for old, new in replacements.items():
+            text = text.replace(old, new)
+        output = stage / ".agents/skills" / name / paths[0]
+        output.parent.mkdir(parents=True, exist_ok=True)
+        output.write_text(text)
+
+
+def create_claude_skill_links(stage: Path) -> None:
+    destination = stage / ".claude/skills"
+    destination.mkdir(parents=True, exist_ok=True)
+    for name in REPOSITORY_SKILLS:
+        (destination / name).symlink_to(f"../../.agents/skills/{name}")
+
+
+def validate_canonical_skill_copy(stage: Path, skills_root: Path) -> None:
+    for name in REPOSITORY_SKILLS:
+        compare_skill_tree(
+            resolve_skill(skills_root, name),
+            stage / ".agents/skills" / name,
+            GENERATED_SKILL_OVERLAYS.get(name, ()),
+        )
 
 
 def main() -> None:
@@ -102,7 +143,8 @@ def main() -> None:
         else SKILL.parent
     )
     package_skill = resolve_skill(skills_root, "package-structure")
-    resolve_skill(skills_root, "docs-maintainer")
+    for skill_name in REPOSITORY_SKILLS:
+        resolve_skill(skills_root, skill_name)
     versions_path = Path(args.versions).resolve(strict=True)
     versions = json.loads(versions_path.read_text())
     if not isinstance(versions.get("sources"), dict) or not versions["sources"]:
@@ -125,7 +167,10 @@ def main() -> None:
     stage = Path(tempfile.mkdtemp(prefix=f".{target.name}.stage-", dir=target.parent))
     try:
         copy_assets(stage, replacements)
-        install_skill_baseline(stage, skills_root)
+        copy_complete_skill_baseline(stage, skills_root)
+        render_repository_skill_profiles(stage, replacements)
+        create_claude_skill_links(stage)
+        validate_canonical_skill_copy(stage, skills_root)
         package_renderer = load_package_renderer(package_skill)
         for kind, directory, package_name in (
             ("effect-service", "domain", f"{args.scope}/domain"),
@@ -154,6 +199,7 @@ def main() -> None:
             "officialSources": versions["sources"],
             "selectedVersions": packages,
             "compatibilityDecisions": decisions,
+            "skillBaseline": baseline_receipt(skills_root),
             "configDigests": {
                 path: sha256(stage / path)
                 for path in (
@@ -184,6 +230,8 @@ def main() -> None:
                 str(stage),
                 "--package-skill-root",
                 str(package_skill),
+                "--skills-root",
+                str(skills_root),
             ],
             check=True,
         )

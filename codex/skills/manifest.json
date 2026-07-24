@@ -4,7 +4,7 @@
   "sourceRepository": "https://github.com/crcorbett/dotfiles.git",
   "sourcePath": "codex/skills",
   "installedProjection": "~/.agents/skills",
-  "projectionDigest": "6f2d4416cc8cb574046fcd39c7b67e2962ded5d94101b9755b0a4b40306cc65f",
+  "projectionDigest": "d4b2a19c124465476db600dd2fb07adb59b10f451addd2cc7717f281cd718c9d",
   "skills": [
     {
       "name": "data-visualisation",
@@ -14,7 +14,7 @@
     {
       "name": "docs-maintainer",
       "fileCount": 5,
-      "treeDigest": "1f8d72d95a0f0cb7ca14bde977fdcb8a5d3933349b5c455e4fb1e62a2ee86883"
+      "treeDigest": "dd84a757b0005b8994b781dfdcbb316fa9bdf9610970493bad6fef2f301954ff"
     },
     {
       "name": "effect-client-wrapper",
@@ -43,8 +43,8 @@
     },
     {
       "name": "repo-structure",
-      "fileCount": 100,
-      "treeDigest": "2e42dfae793124159b81dbe1233d116031ed57113c90a7208ee8b57e4a6375fa"
+      "fileCount": 97,
+      "treeDigest": "7f42c049fb35e6a194e401adfd2226c4f6cc505651e7d03da716f874c6bda330"
     },
     {
       "name": "voice",
