@@ -3,18 +3,23 @@
   "skills": [
     {
       "name": "prd-writer",
-      "requiredPhrases": ["truth layers", "runbooks (repeatable procedures", "bounded tool receipts", "four distinct clocks", "critical-journey inventory", "docs-maintainer", "`Preserve`", "place data loading, Effect execution, and shared orchestration at the route or feature boundary", "manifests, configuration, Schemas, migrations, generators, fixtures, tests, observability, release, rollout, and rollback artifacts"],
+      "requiredPhrases": ["truth layers", "runbooks (repeatable procedures", "bounded tool receipts", "four distinct clocks", "critical-journey inventory", "requirement-to-proof", "plausible false green", "proof by proxy", "docs-maintainer", "`Preserve`", "place data loading, Effect execution, and shared orchestration at the route or feature boundary", "manifests, configuration, Schemas, migrations, generators, fixtures, tests, observability, release, rollout, and rollback artifacts"],
       "forbiddenPhrases": ["exactly three passes", "delegate one subagent per task", "DeepWiki is authoritative for the local codebase", "generic SDK use callback is allowed", "raw id: string is acceptable", "instanceof is preferred", "a leaf owns its specific query", "leaves own their data and commands"]
     },
     {
       "name": "prd-review",
-      "requiredPhrases": ["Review the harness contract", "three-pass rules", "runbooks own repeatable procedures", "four distinct timing clocks", "docs-maintainer", "`Preserve`", "shared state, data loading, Effect execution, and orchestration at clear feature or route boundaries", "For every surface, mark it `Change required`, `Preserve`, or `N/A` with repository evidence"],
+      "requiredPhrases": ["Review the harness contract", "three-pass rules", "runbooks own repeatable procedures", "four distinct timing clocks", "requirement-to-proof", "plausible false green", "proof by proxy", "docs-maintainer", "`Preserve`", "shared state, data loading, Effect execution, and orchestration at clear feature or route boundaries", "For every surface, mark it `Change required`, `Preserve`, or `N/A` with repository evidence"],
       "forbiddenPhrases": ["exactly three passes", "delegate one subagent per task", "DeepWiki is authoritative for the local codebase", "generic SDK use callback is allowed", "raw id: string is acceptable", "instanceof is preferred", "a leaf owns its specific query", "leaves own their data and commands"]
     },
     {
       "name": "prd-implementer",
-      "requiredPhrases": ["Delegated Slice Prompt Contract", "one primary trajectory", "fixed number of passes", "runbooks as procedures", "four distinct clocks", "docs-maintainer", "`Preserve`", "Compose data loading, shared state, and Effect execution at the route or feature boundary", "resolve every SPEC impact-ledger row for docs, READMEs, lint/custom rules and fixtures, CI, skills and agent instructions, configuration/manifests, Schemas/migrations/generators, tests/fixtures, observability, release, rollout, and rollback"],
+      "requiredPhrases": ["Delegated Slice Prompt Contract", "one primary trajectory", "fixed number of passes", "runbooks as procedures", "four distinct clocks", "requirement-to-proof", "plausible false green", "proof by proxy", "docs-maintainer", "`Preserve`", "Compose data loading, shared state, and Effect execution at the route or feature boundary", "resolve every SPEC impact-ledger row for docs, READMEs, lint/custom rules and fixtures, CI, skills and agent instructions, configuration/manifests, Schemas/migrations/generators, tests/fixtures, observability, release, rollout, and rollback"],
       "forbiddenPhrases": ["exactly three passes", "delegate one subagent per task", "DeepWiki is authoritative for the local codebase", "generic SDK use callback is allowed", "raw id: string is acceptable", "instanceof is preferred", "a leaf owns its specific query", "leaves own their data and commands"]
+    },
+    {
+      "name": "docs-maintainer",
+      "requiredPhrases": ["false green", "earliest durable owner", "direct test oracle", "reopens the owning task", "terminal audit"],
+      "forbiddenPhrases": ["exactly three passes", "delegate one subagent per task", "DeepWiki is authoritative for the local codebase"]
     }
   ],
   "syntheticCases": [
@@ -89,6 +94,15 @@
       "violatedInvariant": "Installed APIs and repository-local policy take precedence over generic advice and upstream default-branch guidance.",
       "recovery": "Follow the local owner, record the upstream/local difference, and change the local contract only through an explicit decision.",
       "owner": "Repository truth layer"
+    },
+    {
+      "id": "proof-by-proxy",
+      "tags": ["proof-traceability"],
+      "request": "Treat a broad green suite and successful object construction as proof that every retry-policy property and every composition root has the required semantic behavior.",
+      "expectedDecision": "reject",
+      "violatedInvariant": "Every material requirement requires a direct observable and an oracle that rejects a plausible false green.",
+      "recovery": "Build the requirement-to-proof crosswalk and directly assert each applicable retry property and composition-root result.",
+      "owner": "Requirement-to-proof contract"
     },
     {
       "id": "bounded-delegation",

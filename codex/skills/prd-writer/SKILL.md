@@ -119,6 +119,18 @@ For every required change, name the exact path or narrow path set, dependency or
 
 - Edit the SPEC and its canonical sibling task artifact in place as evidence changes the design.
 - Keep tasks atomic, ordered, end-to-end, and traceable to SPEC requirements.
+- Maintain a requirement-to-proof crosswalk for every material normative
+  requirement. For each `must`, `required`, `never`, or accepted finding, name
+  the owning task,
+  direct observable, expected postcondition, plausible false green rejected,
+  focused command or procedure owner, evidence owner, receipt path, and
+  limitations. Broad suite coverage, successful construction, source layout,
+  or a neighbouring assertion is proof by proxy, not a direct oracle.
+- Expand compound policy into deterministic verification. Retry requirements
+  separately name eligibility, bounded attempts, backoff, jitter, idempotent
+  reads, uncertain writes, and observation after timeout when applicable.
+  Isolation, substitution, and composition-root requirements directly assert
+  the semantic result from every relevant root.
 - Map every accepted audit finding to at least one owning requirement and task;
   record rejected, deferred, or optional findings as out of scope rather than
   silently dropping or implementing them.
@@ -140,5 +152,11 @@ For ordinary repository improvements, require normal repository checks,
 applicable real journeys, and one fresh independent review. Require a
 fixed-worker comparative evaluation only when the SPEC makes a general claim
 about the behavioral effect of a harness intervention.
+
+When a SPEC explicitly requires a terminal audit, place it once in the final
+closeout task after every implementation dependency. Any later implementation
+invalidates that terminal status. The closeout task must reopen the owner of
+each finding, refresh affected receipts and rollback identity, and run full
+verification on the exact receipt-bearing state.
 
 Finish by re-reading the SPEC and tasks together, checking links and diagrams, validating structured task files, and reporting the exact artifacts changed and remaining decisions.

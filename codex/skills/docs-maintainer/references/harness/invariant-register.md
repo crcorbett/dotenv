@@ -13,7 +13,7 @@ one.
 | `HC-BOUNDARY-001` | Untrusted values decode once at ingress and encode at outward boundaries. | Owning Schema, adapter, tests | Raw primitives or unchecked SDK output flow inward |
 | `HC-TOOL-001` | A material tool supports discovery, invocation, interpretation, recovery, repair, and real-system verification. | Terminal receipt and recovery route | Green wrapper masks partial or failed work |
 | `HC-DOC-001` | Architecture, standards, READMEs, skills, runbooks, proof, plans, and archives own distinct claims. | Document classification and route checks | Skill copies a runbook or proof becomes policy |
-| `HC-PROOF-001` | Proof matches the artifact, boundary, environment, journey, and claim. | Bounded receipt and critical-journey oracle | Unit test claimed as production proof |
+| `HC-PROOF-001` | Every material requirement has direct proof matching the artifact, boundary, environment, journey, and claim. | Requirement-to-proof crosswalk, bounded receipt, direct oracle, and plausible false green rejected | Broad suite or neighbouring assertion claimed as proof |
 | `HC-AUTH-001` | Capability, identity, authority, approval, and external actuality remain separate. | Authority envelope, approval receipt, readback | Tool access treated as permission to mutate |
 | `HC-FEEDBACK-001` | Repeated findings improve the earliest durable owner and retire weaker reminders. | Control record, fixture, retirement target | More prose added after every recurrence |
 | `HC-AUTO-001` | Continuous work is admitted only for a settled, observable, bounded, recoverable loop. | Control record with signal, state, convergence, proof, stop, rollback, escalation | Exploratory judgment automated |

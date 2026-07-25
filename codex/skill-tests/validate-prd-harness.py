@@ -21,6 +21,7 @@ REQUIRED_TAGS = {
     "runbook",
     "retrieval",
     "delegation",
+    "proof-traceability",
 }
 
 

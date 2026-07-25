@@ -59,8 +59,14 @@ For each task:
    lint/configuration, skills, and operational artifacts immediately when
    implementation evidence changes them.
 6. Audit the diff for architecture, helper sprawl, boundary provenance, React composition, and enforcement.
-7. Run the narrow proof first and broaden according to blast radius.
-8. Record evidence and mark completion only when every required surface and
+7. Replay the task's requirement-to-proof crosswalk against the actual
+   assertions. For every material requirement, confirm the direct observable,
+   expected postcondition, plausible false green rejected, focused command or
+   procedure owner, evidence owner, receipt path, limitations, and non-claims.
+   Reject proof by proxy from broad suite coverage, successful construction,
+   source layout, or a neighbouring assertion.
+8. Run the narrow proof first and broaden according to blast radius.
+9. Record evidence and mark completion only when every required surface and
    documentation-impact row passes.
 
 Do not preserve a fixed number of passes, subagents, files, or commands as a
@@ -123,6 +129,13 @@ implementation slice. Mark every impact-ledger surface `Change required`,
 `Preserve`, or `N/A` with evidence and attach its bounded receipt before task
 acceptance.
 
+For compound runtime or provider policy, inspect each property as well as the
+terminal result. Retry tests distinguish eligible and ineligible failures,
+bounded attempts, backoff, jitter, idempotent reads, uncertain writes, and
+observation after timeout when applicable. Isolation, substitution, and
+composition-root tests directly assert the semantic result from every relevant
+root.
+
 ## Close out the SPEC
 
 Invoke docs-maintainer again before final task or SPEC closeout. Reconcile the
@@ -130,6 +143,13 @@ active SPEC, tasks, execution plan, lifecycle state, successor/tombstone and
 archive pointers, proof packets, limitations, and non-claims against the
 implemented repository. Run the exact local documentation and lifecycle checks
 and mark completion only after current owners and planning artifacts agree.
+
+When review or a terminal audit finds a gap, reopen the owning task. The
+correction invalidates affected downstream acceptance, receipts, rollback
+identity, and earlier terminal-audit status. Rerun focused proof and the
+affected review lens. A SPEC-required terminal audit runs once after every
+implementation task is terminal, followed by full verification on the exact
+receipt-bearing state; it does not run after each slice.
 
 For ordinary repository improvements, finish after the accepted important
 corrections, normal repository checks, applicable real journeys, and one fresh
