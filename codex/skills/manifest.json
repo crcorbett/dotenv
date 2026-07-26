@@ -15,7 +15,7 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "d76a1bee8e7989b82dd3aef4febaed6a6cb64f486af2af10cf2ea53433a32e4d",
+  "projectionDigest": "a4a148d49ef6aea4208621fb70c9859694bc71bfacec1c5fe148f414b98d0abd",
   "skills": [
     {
       "name": "data-visualisation",
@@ -40,7 +40,7 @@
     {
       "name": "prd-implementer",
       "fileCount": 2,
-      "treeDigest": "6636ed4a2da136fd27050a6e1f4eeb2fb10a40b54497d06c176f4b49685f385a"
+      "treeDigest": "05c0ca9d8a6bebe2cb97cacbbbf6c1746113de815726a604e951d912b87c798a"
     },
     {
       "name": "prd-review",
