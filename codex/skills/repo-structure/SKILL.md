@@ -122,6 +122,49 @@ package-structure skills receive explicit generated repository profiles; those
 profiles are the only permitted tree differences. Claude compatibility
 surfaces are links, never independently maintained copies.
 
+## Split folders and files by durable ownership
+
+Choose paths from the call graph and semantic owner. A repository/package
+boundary is justified by an independent contract; an app-internal subfolder is
+justified by a durable capability, domain, adapter, authority, runtime, or
+independently tested policy. File count alone is not a boundary, and a one-file
+capability should stay a file when a folder would add no meaning.
+
+- Start with actual callers, exports, tests, untrusted ingress, runtime
+  composition, and provider/authority edges before moving a file.
+- Name folders after capabilities/domains (`observability`, `cloudflare`, or
+  `metrics-token-qualification`) and files after owned roles (`schemas.ts`,
+  `errors.ts`, `service.ts`, `plan.ts`, `authority.ts`, `website.ts`, or
+  `manifest.main.ts`).
+- Do not scaffold every conventional file. Add `service.ts`, `live.layer.ts`,
+  `test.layer.ts`, or `config.ts` only when a real service, resource Layer,
+  deterministic test Layer, or durable configuration boundary exists.
+- Keep tests beside app-internal owners or in the package's contract/test
+  location; keep reusable fixtures in the package-approved testing owner.
+  Reject `common/`, `shared/`, `helpers/`, and `utils/` dumping grounds.
+- After a split, update imports, tests, architecture/README pointers, exports,
+  and lifecycle/proof owners in the same slice. Preserve one canonical Schema,
+  error, service, plan, and configuration owner.
+
+For a Site-shaped app, the preferred internal path is
+`apps/web/src/lib/<capability>/<owned-file>.ts`. The accepted build topology is
+an example, not a universal scaffold:
+
+```text
+apps/web/src/lib/build/
+├── axiom/metrics-token-qualification/{schemas.ts,errors.ts,qualification.ts}
+├── cloudflare/{stack.ts,website.ts}
+├── github/deployment-authority/{schemas.ts,authority.ts}
+├── observability/{schemas.ts,plan.ts}
+├── site-proof/manifest.main.ts
+└── vite/{schemas.ts,errors.ts,config.ts,og-assets.ts,post-source.ts}
+```
+
+This topology keeps the shared `ObservabilityExportPlan` with observability,
+the Axiom qualification boundary with its capability, provider adapters with
+their provider owner, and `alchemy.run.ts` as the root composition owner. It
+does not imply a new package or template-only service/Layer/config modules.
+
 ## Enforce the architecture
 
 - Domain service owns Schemas, failures, operations, live/test Layers.

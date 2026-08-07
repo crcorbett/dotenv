@@ -15,7 +15,7 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "a4a148d49ef6aea4208621fb70c9859694bc71bfacec1c5fe148f414b98d0abd",
+  "projectionDigest": "7c797cda59f10190304fffbbef02f6c4ebd778819e9bd58b051d3d8c4a91c723",
   "skills": [
     {
       "name": "data-visualisation",
@@ -55,7 +55,7 @@
     {
       "name": "repo-structure",
       "fileCount": 114,
-      "treeDigest": "eaa35df2e828849acaecae19cf539fc0a6469ece638f0117a92e0f500d45d06b"
+      "treeDigest": "556c38513cd81e6aa717896da1960e216185188ace30085d0a1bfc5c8b33e919"
     },
     {
       "name": "voice",
