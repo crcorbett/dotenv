@@ -15,8 +15,13 @@
       "role": "compatibility"
     }
   ],
-  "projectionDigest": "7c797cda59f10190304fffbbef02f6c4ebd778819e9bd58b051d3d8c4a91c723",
+  "projectionDigest": "22aee2cbb9fd2b055bf4597b4ac41051d0988a9f790f485710da98d57f4ea810",
   "skills": [
+    {
+      "name": "alchemy-iac",
+      "fileCount": 20,
+      "treeDigest": "09039d7cee7b9941a3864dc8270dde3007eebe7e1e809de3f2285fcf2f901895"
+    },
     {
       "name": "data-visualisation",
       "fileCount": 25,
@@ -56,6 +61,11 @@
       "name": "repo-structure",
       "fileCount": 114,
       "treeDigest": "556c38513cd81e6aa717896da1960e216185188ace30085d0a1bfc5c8b33e919"
+    },
+    {
+      "name": "strict-effect-ts",
+      "fileCount": 26,
+      "treeDigest": "813e2a399dcc45f3fc13753640c73f484579ea14d7bdb7a292a8568dc3681258"
     },
     {
       "name": "voice",
