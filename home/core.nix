@@ -51,6 +51,10 @@
   # Dotfiles (symlinked to nix store - read-only)
   # =============================================================================
   home.file = {
+    ".codex/AGENTS.md" = {
+      source = ../codex/AGENTS.md;
+      force = true;
+    };
     ".zshrc.local".source = ./dotfiles/zshrc;
     ".p10k.zsh".source = ./dotfiles/p10k.zsh;
     # Note: .gitconfig is copied (not symlinked) so gh auth can write to it

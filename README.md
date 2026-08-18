@@ -101,6 +101,7 @@ dotenv/
 │   └── exit_node_setup.sh    # Configure VM as exit node
 │
 ├── codex/
+│   ├── AGENTS.md             # Canonical global agent instructions
 │   └── skills/               # Canonical shared engineering skills + manifest
 │
 ├── APPS.md                   # Manual app installation list
@@ -154,6 +155,11 @@ projection:
 ```bash
 python3 codex/skill-tests/validate-prd-harness.py
 ```
+
+### Global agent instructions
+
+`codex/AGENTS.md` is the version-controlled source for the global Codex agent
+instructions. Home Manager installs it at `~/.codex/AGENTS.md`.
 
 ### Both Platforms (core.nix)
 
