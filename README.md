@@ -158,8 +158,9 @@ python3 codex/skill-tests/validate-prd-harness.py
 
 ### Global agent instructions
 
-`codex/AGENTS.md` is the version-controlled source for the global Codex agent
-instructions. Home Manager installs it at `~/.codex/AGENTS.md`.
+`codex/AGENTS.md` is the version-controlled source for the global agent
+instructions. Home Manager installs the same file at `~/.agents/AGENTS.md` and
+`~/.codex/AGENTS.md`.
 
 ### Both Platforms (core.nix)
 

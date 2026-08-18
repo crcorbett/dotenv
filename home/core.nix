@@ -51,6 +51,10 @@
   # Dotfiles (symlinked to nix store - read-only)
   # =============================================================================
   home.file = {
+    ".agents/AGENTS.md" = {
+      source = ../codex/AGENTS.md;
+      force = true;
+    };
     ".codex/AGENTS.md" = {
       source = ../codex/AGENTS.md;
       force = true;
