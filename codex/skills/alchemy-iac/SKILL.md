@@ -25,6 +25,7 @@ Use this skill with `$strict-effect-ts` whenever infrastructure code contains ma
 12. Prefer no IaC over ceremonial IaC. If Vercel Git, a provider console, or another declared owner already governs the lifecycle, document the boundary and omit the resource graph unless Alchemy has a narrow named role.
 13. Never write credentials, bearer tokens, state secrets, raw provider payloads, local absolute paths, or unbounded logs into receipts.
 14. Do not mutate providers, issue credentials, deploy, destroy, push, or publish merely because this skill is loaded. Follow the user's exact authority.
+15. Never cross an `apps/**` or `packages/**` workspace boundary through a relative filesystem import. Use an explicit package or app export. If substantial multi-provider infrastructure needs an app-owned contract, move the shared contract and its real owner into an infrastructure package instead of exporting an app-internal path.
 
 ## Workflow
 
@@ -36,8 +37,9 @@ Read, in order:
 2. Current architecture and deployment documentation.
 3. `package.json`, lockfile, and installed Alchemy/Effect/provider versions.
 4. `alchemy*.run.ts`, infrastructure packages, provider modules, workflows, tests, and receipts.
-5. Provider ownership and live-readback instructions.
-6. Git status for every checkout that may be edited.
+5. Workspace manifests and export maps, plus a source scan for relative imports that reach into `apps/**` or `packages/**`.
+6. Provider ownership and live-readback instructions.
+7. Git status for every checkout that may be edited.
 
 Record the current owner of each resource and each claim. Do not use a stale SPEC, historical receipt, or another worktree as current truth.
 
@@ -117,6 +119,11 @@ alchemy.run.ts
 alchemy.preview.run.ts
 alchemy.production.run.ts
 ```
+
+When a package owns the graph, root entrypoints, apps, tools and sibling
+packages consume only explicit exports. Move shared Schemas and contracts with
+the graph when they no longer belong to one app. Do not move only the stack and
+leave it importing app internals through `../apps/**`.
 
 Do not create every listed file. Create a file only when it owns a coherent contract. Read [layout and composition](references/architecture/layout-and-composition.md) and [worked layouts and patterns](references/examples/layouts-and-patterns.md).
 
@@ -218,6 +225,7 @@ Reject the change if any answer is unclear:
 - Are receipts portable, bounded, and secret-negative?
 - Can a proof stage be destroyed without affecting Production?
 - Is the file layout semantic rather than ceremonial?
+- Does every cross-app or cross-package import use an explicit workspace export?
 - Does the repository actually need Alchemy for this lifecycle?
 
 Consult [anti-patterns](references/examples/anti-patterns.md) during review.

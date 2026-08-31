@@ -2,6 +2,7 @@ import { describe, expect, test } from "bun:test";
 import {
   forbiddenRuntimePattern,
   genericClientPattern,
+  isRelativeWorkspaceImport,
   primitiveSemanticConfigPattern,
   rawSemanticIdPattern,
   runtimeClassPolicyPattern,
@@ -21,6 +22,40 @@ describe("repository policy", () => {
       sourceConditionFirst(
         { types: "d.ts", ["__SOURCE_CONDITION__"]: "src", default: "js" },
         "__SOURCE_CONDITION__",
+      ),
+    ).toBe(false);
+  });
+  test("workspace/rejects-relative-cross-workspace-imports", () => {
+    expect(
+      isRelativeWorkspaceImport(
+        "/repo/tools/readback.ts",
+        "../packages/domain/src/schemas",
+      ),
+    ).toBe(true);
+    expect(
+      isRelativeWorkspaceImport(
+        "/repo/packages/domain/src/service.ts",
+        "../../rpc/src/service",
+      ),
+    ).toBe(true);
+    expect(
+      isRelativeWorkspaceImport(
+        "/repo/apps/web/src/lib/runtime.ts",
+        "../../../../packages/domain/src/service",
+      ),
+    ).toBe(true);
+  });
+  test("workspace/allows-owned-relative-imports-and-package-exports", () => {
+    expect(
+      isRelativeWorkspaceImport(
+        "/repo/packages/domain/src/live.layer.ts",
+        "./service",
+      ),
+    ).toBe(false);
+    expect(
+      isRelativeWorkspaceImport(
+        "/repo/apps/web/src/runtime.ts",
+        "__SCOPE__/domain/service",
       ),
     ).toBe(false);
   });

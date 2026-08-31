@@ -173,6 +173,10 @@ does not imply a new package or template-only service/Layer/config modules.
   Effect execution, SSR Exit codecs, and disposal.
 - Browser runtime uses Fetch; server loaders use the in-process HTTP client and
   never loop back to deployment HTTP.
+- Cross-app and cross-package imports use explicit workspace exports. The
+  rendered repository rule resolves relative imports and rejects any target
+  owned by another `apps/*` or `packages/*` workspace, including shortened
+  sibling paths that do not spell the workspace root.
 - Route/feature boundaries own data loading, Effect/service execution,
   mutations, commands, shared state, and workflow/error policy. Presentation
   leaves receive narrow readonly values and action callbacks, then own

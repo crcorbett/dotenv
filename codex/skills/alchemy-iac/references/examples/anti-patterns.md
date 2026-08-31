@@ -12,6 +12,15 @@
 
 **Correction:** split by semantic owner: Schemas/errors/service/Layer, provider graph, datasets, dashboards, operations, receipt.
 
+## Filesystem boundary bypass
+
+**Smell:** a root stack, tool, app, or package imports `../apps/**`,
+`../packages/**`, or another workspace's private `src/**` path.
+
+**Correction:** use an explicit workspace export. If the contract is genuinely
+shared, move it and its Schema to the package that owns the shared meaning.
+Do not expose an app-internal module only to keep a misplaced owner alive.
+
 ## Stateful success
 
 **Smell:** state contains a resource, so the change is reported live.

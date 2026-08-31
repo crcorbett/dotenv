@@ -4,7 +4,12 @@ The generated ordered gate is format check, Oxlint, repository policy-rule
 tests, development and production Knip, TypeScript, Vitest, then Turbo build.
 `tools/oxlint` owns policy rules and
 positive/negative fixtures for source-condition order, runtime execution,
-generic client escape hatches, and Layer root exports.
+generic client escape hatches, Layer root exports, and resolved app/package
+workspace boundaries. `repository/no-relative-workspace-imports` rejects a
+relative import when its resolved target belongs to another `apps/*` or
+`packages/*` workspace. Keep project-specific lint here; the generic
+anti-slop plugin must remain portable across single-package and monorepo
+repositories.
 
 The TanStack app's `check-types` script invokes Vite once before `tsc` so the
 framework generates `routeTree.gen.ts`; generated route output is never stored

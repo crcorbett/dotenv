@@ -192,6 +192,19 @@ with tempfile.TemporaryDirectory(prefix="repo-structure-cases-") as raw:
     )
     cases["invalid-production-knip"] = run_validator(invalid_production_knip).returncode != 0
 
+    missing_workspace_rule = temp / "missing-workspace-boundary-rule"
+    shutil.copytree(golden, missing_workspace_rule, symlinks=True)
+    path = missing_workspace_rule / "oxlint.config.ts"
+    path.write_text(
+        path.read_text().replace(
+            '    "repository/no-relative-workspace-imports": "error",\n',
+            "",
+        )
+    )
+    cases["missing-workspace-boundary-rule"] = (
+        run_validator(missing_workspace_rule).returncode != 0
+    )
+
     leaf_owned_boundary_work = temp / "leaf-owned-boundary-work"
     shutil.copytree(golden, leaf_owned_boundary_work)
     path = leaf_owned_boundary_work / "docs/architecture/frontend-composition.md"

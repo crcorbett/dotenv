@@ -94,7 +94,8 @@ required = [
     "tools/governance/schemas/task-plan.schema.json",
     "repo-structure.render.json",
     "docs/architecture/package-ownership.md", "docs/architecture/frontend-composition.md",
-    "docs/architecture/testing-and-quality.md", "tools/oxlint/policy.test.ts",
+    "docs/architecture/testing-and-quality.md", "tools/oxlint/policy.ts",
+    "tools/oxlint/policy.test.ts",
     ".agents/skills/package-structure/SKILL.md",
     ".agents/skills/docs-maintainer/SKILL.md",
     ".agents/skills/docs-maintainer/agents/openai.yaml",
@@ -104,6 +105,18 @@ required = [
 missing = [path for path in required if not (root / path).is_file()]
 if missing:
     raise SystemExit(f"missing repository files: {missing}")
+oxlint_config = (root / "oxlint.config.ts").read_text()
+if (
+    'specifier: "./tools/oxlint/policy.ts"' not in oxlint_config
+    or '"repository/no-relative-workspace-imports": "error"' not in oxlint_config
+):
+    raise SystemExit("Oxlint must register and enable the repository workspace-boundary rule")
+oxlint_policy = (root / "tools/oxlint/policy.ts").read_text()
+if (
+    '"no-relative-workspace-imports": noRelativeWorkspaceImportsRule'
+    not in oxlint_policy
+):
+    raise SystemExit("repository workspace-boundary rule implementation is missing")
 frontend_composition = (
     root / "docs/architecture/frontend-composition.md"
 ).read_text()

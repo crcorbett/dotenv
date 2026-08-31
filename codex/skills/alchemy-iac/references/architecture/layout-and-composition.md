@@ -98,6 +98,12 @@ Use a package when at least one is true:
 
 The package must remain importable without executing a runtime or reading environment variables.
 
+Root entrypoints, applications, tools and sibling packages must consume it
+through declared package exports. If the infrastructure graph needs a Schema
+or contract currently buried in an app, move that shared owner into the
+package as part of the same change. A package that still imports
+`../apps/**` is not an extracted boundary.
+
 ## Root entrypoints
 
 Keep root entrypoints boring:
@@ -137,6 +143,11 @@ Export:
 - semantic service contracts;
 - safe receipt types;
 - stable catalogue declarations when another package must consume them.
+
+Workspace consumers import these contracts through package or app export
+names. Do not use relative filesystem paths into `apps/**`, `packages/**`, or
+another workspace's `src/**` tree. A lint rule should keep this executable,
+including in files with narrower import restrictions.
 
 Keep private:
 

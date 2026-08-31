@@ -233,6 +233,7 @@ def main() -> None:
                     "package.json", "tsconfig.base.json", "tsconfig.infrastructure.json", "turbo.json",
                     "oxlint.config.ts", "oxfmt.config.ts", "vitest.config.ts",
                     "knip.ts", "alchemy.run.ts",
+                    "tools/oxlint/policy.ts",
                     "docs/governance/harness-profile.json",
                     "tools/governance/validate_audit_artifacts.py",
                     "tools/governance/finalize_repository_receipt.py",
